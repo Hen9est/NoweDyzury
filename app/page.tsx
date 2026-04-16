@@ -197,16 +197,23 @@ export default function PublicPage() {
   const formatName = (name: string) => {
     if (name === "-" || !name || name === "—") return <span className="text-on-surface/20">—</span>;
     
-    // Specjalna obsługa dla dwóch osób (rozdzielonych ukośnikiem)
+    // Specjalna obsługa dla dwóch osób (przecięcie po skosie)
     if (name.includes('/')) {
       const parts = name.split('/');
       return (
-        <div className="flex flex-col leading-[1.05] py-0.5">
-          {parts.map((p, i) => (
-            <div key={i} className="text-[0.45rem] truncate font-medium">
-              {p.trim()}
-            </div>
-          ))}
+        <div className="relative w-full h-8 overflow-hidden group">
+          {/* Linia ukośna */}
+          <div className="absolute inset-0 opacity-30" style={{ 
+            background: 'linear-gradient(to top right, transparent calc(50% - 0.5px), currentColor 50%, transparent calc(50% + 0.5px))' 
+          }} />
+          {/* Górne nazwisko (lewy górny róg) */}
+          <div className="absolute top-0 left-0 text-[0.42rem] leading-none text-left p-0.5 font-bold w-[90%] truncate">
+            {parts[0].trim()}
+          </div>
+          {/* Dolne nazwisko (prawy dolny róg) */}
+          <div className="absolute bottom-0 right-0 text-[0.42rem] leading-none text-right p-0.5 font-bold w-[90%] truncate">
+            {parts[1].trim()}
+          </div>
         </div>
       );
     }
