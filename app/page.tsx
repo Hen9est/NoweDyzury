@@ -75,7 +75,7 @@ export default function PublicPage() {
       }
 
       const firstRow = filteredDuties[0];
-      const [firstStartStr] = firstRow.time.split('-');
+      const [firstStartStr] = (firstRow.time || "08:00-08:10").split('-');
       const firstMatch = firstStartStr.match(/(\d{1,2}):(\d{2})/);
       let firstBreakStart = 8 * 60;
       if (firstMatch) {
@@ -89,7 +89,7 @@ export default function PublicPage() {
       } else {
         for (let i = 0; i < filteredDuties.length; i++) {
           const row = filteredDuties[i];
-          const parts = row.time.split('-');
+          const parts = (row.time || "").split('-');
           if (parts.length < 2) continue;
 
           const startMatch = parts[0].match(/(\d{1,2}):(\d{2})/);
@@ -159,7 +159,7 @@ export default function PublicPage() {
     const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
     const firstRow = filteredDuties[0];
     if (!firstRow) return null;
-    const [firstStartStr] = firstRow.time.split('-');
+    const [firstStartStr] = (firstRow.time || "08:00-08:10").split('-');
     const firstMatch = firstStartStr.match(/(\d{1,2}):(\d{2})/);
     let firstBreakStart = 8 * 60;
     if (firstMatch) {
@@ -169,7 +169,7 @@ export default function PublicPage() {
     let previousBreakEnd: number | null = null;
     let previousRowId: number | null = null;
     for (const row of filteredDuties) {
-      const parts = row.time.split('-');
+      const parts = (row.time || "").split('-');
       if (parts.length < 2) continue;
       const startMatch = parts[0].match(/(\d{1,2}):(\d{2})/);
       const endMatch = parts[1].match(/(\d{1,2}):(\d{2})/);
@@ -186,137 +186,130 @@ export default function PublicPage() {
   }, [filteredDuties]);
 
   const formatTime = (time: string) => {
-    const [start, end] = time.split('-');
+    const [start, end] = (time || "").split('-');
     return (
-      <div className="leading-none">
+      <div className="leading-none text-tiny font-mono">
         {start}<br />{end}
       </div>
     );
   };
 
   const formatName = (name: string) => {
-    if (name === "-" || !name) return "—";
-    const parts = name.split(' ');
-    if (parts.length >= 2 && parts[0].endsWith('.')) {
-        return <>{parts[0]}<br />{parts.slice(1).join(' ')}</>;
+    if (name === "-" || !name || name === "—") return <span className="text-on-surface/20">—</span>;
+    const parts = name.split(/[\/\s]+/);
+    if (parts.length >= 2) {
+        return <div className="leading-tight">{parts[0]}<br />{parts.slice(1).join(' ')}</div>;
     }
-    return name;
+    return <div className="leading-tight">{name}</div>;
   };
 
   return (
-    <div className="flex flex-col bg-background selection:bg-emerald-100" style={{ width: '640px', height: '500px', margin: '0', overflow: 'hidden' }}>
-      <main className="flex-1 flex flex-col p-3 overflow-hidden gap-3">
-        {/* Countdown Section */}
-        <section className="bg-[#1e293b] rounded-xl p-4 flex flex-col gap-2 shadow-lg shrink-0">
-          <div className="flex justify-between items-end">
-            <div className="flex flex-col">
-              <span className="text-xxs font-bold text-slate-400 uppercase tracking-widest">DYŻURY</span>
-              <h2 className="text-2xl font-extrabold text-white tracking-tighter leading-none">
-                {timer.visible ? `${timer.label}: ${timer.currentTime}` : `DYŻURY: ${dayNameMap[currentDayId]?.toUpperCase()}`}
-              </h2>
-            </div>
-            <div className="text-right">
-              <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
-                {dayNameMap[currentDayId]?.toUpperCase()}, {timer.currentTime}
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#121212] p-4">
+      <div 
+        className="flex flex-col bg-background overflow-hidden shadow-2xl rounded-3xl border-[12px] border-[#ccdbf3]" 
+        style={{ width: '640px', height: '500px' }}
+      >
+        <main className="flex-1 flex flex-col p-4 overflow-hidden gap-3">
+          {/* Countdown Section */}
+          <section className="bg-[#1e293b] rounded-2xl p-4 flex flex-col gap-2 shadow-lg shrink-0">
+            <div className="flex justify-between items-end">
+              <div className="flex flex-col">
+                <span className="text-label-sm font-bold text-slate-400 uppercase tracking-widest">DYŻURY</span>
+                <h2 className="text-2xl font-extrabold text-white tracking-tighter leading-none">
+                  {timer.visible ? `${timer.label}: ${timer.currentTime}` : `DYŻURY: ${dayNameMap[currentDayId]?.toUpperCase()}`}
+                </h2>
               </div>
-              <span className="text-xxs font-semibold text-emerald-400">
-                {timer.visible ? `POZOSTAŁO: ${timer.countdown}` : 'BRAK LEKCJI'}
-              </span>
+              <div className="text-right">
+                <div className="text-label-sm font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                  {dayNameMap[currentDayId]?.toUpperCase()}, {timer.currentTime}
+                </div>
+                <span className="text-label-sm font-semibold text-emerald-400">
+                  {timer.visible ? `POZOSTAŁO: ${timer.countdown}` : 'BRAK LEKCJI'}
+                </span>
+              </div>
             </div>
-          </div>
-          {/* Progress Bar */}
-          <div className="h-2 w-full bg-slate-700/50 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)] transition-all duration-1000 ease-linear"
-              style={{ width: `${timer.progress}%` }}
-            ></div>
-          </div>
-        </section>
+            {/* Progress Bar */}
+            <div className="h-2 w-full bg-slate-700/50 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)] transition-all duration-1000 ease-linear"
+                style={{ width: `${timer.progress}%` }}
+              ></div>
+            </div>
+          </section>
 
-        {/* Table Container */}
-        <section className="flex-1 bg-surface-container-lowest rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.02)] border border-outline-variant/10 overflow-hidden flex flex-col">
-          <div className="overflow-x-auto h-full">
-            <table className="w-full text-left border-collapse table-fixed h-full">
-              <thead className="bg-surface-container-high sticky top-0 z-10">
-                <tr className="text-tiny font-bold text-on-surface-variant uppercase tracking-tighter border-b border-outline-variant/20">
-                  <th className="py-2 px-1 text-center w-[25px]">NR</th>
-                  <th className="py-2 px-1 w-[60px]">CZAS</th>
-                  <th className="py-2 px-0.5 text-emerald-800">ZIELONY</th>
-                  <th className="py-2 px-0.5 text-indigo-800">FIOLET</th>
-                  <th className="py-2 px-0.5 text-orange-800">POMA.</th>
-                  <th className="py-2 px-0.5 text-slate-700">UNDRG.</th>
-                  <th className="py-2 px-0.5 text-yellow-800">ŻÓŁTY</th>
-                  <th className="py-2 px-0.5 text-red-800">CZERW.</th>
-                  <th className="py-2 px-0.5 text-blue-800">NIEB.</th>
-                  <th className="py-2 px-0.5">PARTER</th>
-                  <th className="py-2 px-0.5">SG</th>
-                  <th className="py-2 px-0.5">OBIAD</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-outline-variant/10">
-                {filteredDuties.map((row) => {
-                  const isActive = highlightedRowId === row.id;
-                  const baseCellClass = isActive ? "py-1 px-0.5 leading-tight font-bold text-white" : "py-1 px-0.5 leading-tight text-on-surface/80";
-                  const greyCellClass = isActive ? "bg-slate-500 text-white" : "";
-                  
-                  return (
-                    <tr key={row.id} className={`text-tiny ${isActive ? '' : (row.id % 2 === 0 ? 'bg-surface-container-low/30' : '')}`}>
-                      <td className={`py-1 px-1 text-center font-mono font-bold ${greyCellClass}`}>
-                        {row.nr}
-                      </td>
-                      <td className={`py-1 px-1 font-mono ${greyCellClass}`}>
-                        {formatTime(row.time)}
-                      </td>
-                      <td className={`${baseCellClass} ${isActive ? 'bg-emerald-600' : ''}`}>
-                        {formatName(row.zielony)}
-                      </td>
-                      <td className={`${baseCellClass} ${isActive ? 'bg-indigo-600' : ''}`}>
-                        {formatName(row.fiolet)}
-                      </td>
-                      <td className={`${baseCellClass} ${isActive ? 'bg-orange-600' : ''}`}>
-                        {formatName(row.poma)}
-                      </td>
-                      <td className={`${baseCellClass} ${isActive ? 'bg-slate-500' : ''}`}>
-                        {formatName(row.undrg)}
-                      </td>
-                      <td className={`${baseCellClass} ${isActive ? 'bg-yellow-500 text-slate-900' : ''}`}>
-                        {formatName(row.zolty)}
-                      </td>
-                      <td className={`${baseCellClass} ${isActive ? 'bg-red-600' : ''}`}>
-                        {formatName(row.czerw)}
-                      </td>
-                      <td className={`${baseCellClass} ${isActive ? 'bg-blue-600' : ''}`}>
-                        {formatName(row.nieb)}
-                      </td>
-                      <td className={`${baseCellClass} ${isActive ? 'bg-slate-500' : ''}`}>
-                        {formatName(row.parter)}
-                      </td>
-                      <td className={`${baseCellClass} ${isActive ? 'bg-slate-500' : ''}`}>
-                        {formatName(row.sg)}
-                      </td>
-                      <td className={`${baseCellClass} ${isActive ? 'bg-slate-500 text-center' : 'text-center'}`}>
-                        {formatName(row.obiad)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </main>
-
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        body {
-          width: 640px;
-          height: 500px;
-          margin: 0;
-          overflow: hidden;
-          background-color: #f8f9ff;
-          font-family: 'Inter', sans-serif;
-        }
-      `}</style>
+          {/* Table Container */}
+          <section className="flex-1 bg-surface-container-lowest rounded-2xl shadow-inner border border-outline-variant/20 overflow-hidden flex flex-col">
+            <div className="overflow-auto h-full">
+              <table className="w-full text-left border-collapse table-fixed">
+                <thead className="bg-surface-container-high sticky top-0 z-10 shadow-sm">
+                  <tr className="text-tiny font-bold text-on-surface-variant uppercase tracking-tighter border-b border-outline-variant/20">
+                    <th className="py-2 px-1 text-center w-[25px]">NR</th>
+                    <th className="py-2 px-1 w-[55px]">CZAS</th>
+                    <th className="py-2 px-0.5 text-emerald-800">ZIELONY</th>
+                    <th className="py-2 px-0.5 text-indigo-800">FIOLET</th>
+                    <th className="py-2 px-0.5 text-orange-800">POMA.</th>
+                    <th className="py-2 px-0.5 text-slate-700">UNDRG.</th>
+                    <th className="py-2 px-0.5 text-yellow-800">ŻÓŁTY</th>
+                    <th className="py-2 px-0.5 text-red-800">CZERW.</th>
+                    <th className="py-2 px-0.5 text-blue-800">NIEB.</th>
+                    <th className="py-2 px-0.5">PARTER</th>
+                    <th className="py-2 px-0.5">SG</th>
+                    <th className="py-2 px-0.5">OBIAD</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-outline-variant/10">
+                  {filteredDuties.map((row, index) => {
+                    const isActive = highlightedRowId === row.id;
+                    const baseCellClass = isActive ? "py-1 px-0.5 font-bold text-white text-tiny" : "py-1 px-0.5 text-on-surface/80 text-tiny";
+                    const greyCellClass = isActive ? "bg-slate-500 text-white" : "text-on-surface/50";
+                    
+                    return (
+                      <tr key={row.id} className={`${isActive ? '' : (index % 2 === 1 ? 'bg-surface-container-low/30' : '')}`}>
+                        <td className={`py-1 px-1 text-center font-mono font-bold text-tiny ${greyCellClass}`}>
+                          {row.nr}
+                        </td>
+                        <td className={`py-1 px-1 ${greyCellClass}`}>
+                          {formatTime(row.time)}
+                        </td>
+                        <td className={`${baseCellClass} ${isActive ? 'bg-emerald-600' : ''}`}>
+                          {formatName(row.zielony)}
+                        </td>
+                        <td className={`${baseCellClass} ${isActive ? 'bg-indigo-600' : ''}`}>
+                          {formatName(row.fiolet)}
+                        </td>
+                        <td className={`${baseCellClass} ${isActive ? 'bg-orange-600' : ''}`}>
+                          {formatName(row.poma)}
+                        </td>
+                        <td className={`${baseCellClass} ${isActive ? 'bg-slate-500' : ''}`}>
+                          {formatName(row.undrg)}
+                        </td>
+                        <td className={`${baseCellClass} ${isActive ? 'bg-yellow-500 text-slate-900' : ''}`}>
+                          {formatName(row.zolty)}
+                        </td>
+                        <td className={`${baseCellClass} ${isActive ? 'bg-red-600' : ''}`}>
+                          {formatName(row.czerw)}
+                        </td>
+                        <td className={`${baseCellClass} ${isActive ? 'bg-blue-600' : ''}`}>
+                          {formatName(row.nieb)}
+                        </td>
+                        <td className={`${baseCellClass} ${isActive ? 'bg-slate-500' : ''}`}>
+                          {formatName(row.parter)}
+                        </td>
+                        <td className={`${baseCellClass} ${isActive ? 'bg-slate-500' : ''}`}>
+                          {formatName(row.sg)}
+                        </td>
+                        <td className={`${baseCellClass} ${isActive ? 'bg-slate-500 text-center' : 'text-center'}`}>
+                          {formatName(row.obiad)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </div>
     </div>
   );
 }
