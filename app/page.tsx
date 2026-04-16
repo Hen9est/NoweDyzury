@@ -32,7 +32,7 @@ const dayIdMap = ['niedziela', 'poniedzialek', 'wtorek', 'sroda', 'czwartek', 'p
 export default function PublicPage() {
   const [duties, setDuties] = useState<Duty[]>([]);
   const [currentDayId, setCurrentDayId] = useState<string>('poniedzialek');
-  const [timer, setTimer] = useState({ label: '', countdown: '00:00', progress: 0, visible: false, isLesson: false });
+  const [timer, setTimer] = useState({ label: '', countdown: '00:00', progress: 0, visible: false, isLesson: false, currentTime: '' });
 
   const fetchDuties = async () => {
     try {
@@ -46,7 +46,7 @@ export default function PublicPage() {
 
   useEffect(() => {
     fetchDuties();
-    const interval = setInterval(fetchDuties, 30000); // Poll every 30s
+    const interval = setInterval(fetchDuties, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -64,17 +64,16 @@ export default function PublicPage() {
     const updateState = () => {
       const now = new Date();
       const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-      const currentSeconds = now.getSeconds();
+      const currentTimeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       
       let activeFound = false;
       let previousBreakEnd: number | null = null;
 
       if (filteredDuties.length === 0) {
-        setTimer(prev => ({ ...prev, visible: false }));
+        setTimer(prev => ({ ...prev, visible: false, currentTime: currentTimeStr }));
         return;
       }
 
-      // Check first break start
       const firstRow = filteredDuties[0];
       const [firstStartStr] = firstRow.time.split('-');
       const firstMatch = firstStartStr.match(/(\d{1,2}):(\d{2})/);
@@ -85,7 +84,7 @@ export default function PublicPage() {
 
       if (currentTimeInMinutes < firstBreakStart) {
         const lessonStart = 8 * 60;
-        updateTimer(lessonStart, firstBreakStart, true);
+        updateTimer(lessonStart, firstBreakStart, true, currentTimeStr);
         activeFound = true;
       } else {
         for (let i = 0; i < filteredDuties.length; i++) {
@@ -101,14 +100,14 @@ export default function PublicPage() {
             const endTimeInMinutes = parseInt(endMatch[1], 10) * 60 + parseInt(endMatch[2], 10);
 
             if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes < endTimeInMinutes) {
-              updateTimer(startTimeInMinutes, endTimeInMinutes, false);
+              updateTimer(startTimeInMinutes, endTimeInMinutes, false, currentTimeStr);
               activeFound = true;
               break;
             }
 
             if (previousBreakEnd !== null) {
               if (currentTimeInMinutes >= previousBreakEnd && currentTimeInMinutes < startTimeInMinutes) {
-                updateTimer(previousBreakEnd, startTimeInMinutes, true);
+                updateTimer(previousBreakEnd, startTimeInMinutes, true, currentTimeStr);
                 activeFound = true;
                 break;
               }
@@ -119,11 +118,11 @@ export default function PublicPage() {
       }
 
       if (!activeFound) {
-        setTimer(prev => ({ ...prev, visible: false }));
+        setTimer(prev => ({ ...prev, visible: false, currentTime: currentTimeStr }));
       }
     };
 
-    const updateTimer = (startTimeInMinutes: number, endTimeInMinutes: number, isLesson: boolean) => {
+    const updateTimer = (startTimeInMinutes: number, endTimeInMinutes: number, isLesson: boolean, currentTimeStr: string) => {
       const now = new Date();
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
       const currentSeconds = now.getSeconds();
@@ -136,27 +135,17 @@ export default function PublicPage() {
       const elapsedSeconds = currentTotalSeconds - startTotalSeconds;
       const remainingSeconds = endTotalSeconds - currentTotalSeconds;
 
-      if (remainingSeconds <= 0) {
-        setTimer({
-          label: isLesson ? "LEKCJA TRWA:" : "PRZERWA TRWA:",
-          countdown: "00:00",
-          progress: 100,
-          visible: true,
-          isLesson
-        });
-        return;
-      }
-
       const percentage = Math.min(100, Math.max(0, (elapsedSeconds / totalDurationSeconds) * 100));
       const m = Math.floor(remainingSeconds / 60);
       const s = remainingSeconds % 60;
       
       setTimer({
-        label: isLesson ? "LEKCJA TRWA:" : "PRZERWA TRWA:",
-        countdown: `${m}:${s < 10 ? '0' + s : s}`,
+        label: isLesson ? "LEKCJA TRWA" : "PRZERWA TRWA",
+        countdown: `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`,
         progress: percentage,
         visible: true,
-        isLesson
+        isLesson,
+        currentTime: currentTimeStr
       });
     };
 
@@ -165,12 +154,9 @@ export default function PublicPage() {
     return () => clearInterval(timerInterval);
   }, [filteredDuties]);
 
-  // Determine which row is highlighted
   const highlightedRowId = useMemo(() => {
     const now = new Date();
     const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-    
-    // Logic similar to updateState but returns row ID
     const firstRow = filteredDuties[0];
     if (!firstRow) return null;
     const [firstStartStr] = firstRow.time.split('-');
@@ -179,29 +165,19 @@ export default function PublicPage() {
     if (firstMatch) {
       firstBreakStart = parseInt(firstMatch[1], 10) * 60 + parseInt(firstMatch[2], 10);
     }
-
     if (currentTimeInMinutes < firstBreakStart) return firstRow.id;
-
     let previousBreakEnd: number | null = null;
     let previousRowId: number | null = null;
-
     for (const row of filteredDuties) {
       const parts = row.time.split('-');
       if (parts.length < 2) continue;
       const startMatch = parts[0].match(/(\d{1,2}):(\d{2})/);
       const endMatch = parts[1].match(/(\d{1,2}):(\d{2})/);
-
       if (startMatch && endMatch) {
         const startTimeInMinutes = parseInt(startMatch[1], 10) * 60 + parseInt(startMatch[2], 10);
         const endTimeInMinutes = parseInt(endMatch[1], 10) * 60 + parseInt(endMatch[2], 10);
-
-        if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes < endTimeInMinutes) {
-          return row.id;
-        }
-
-        if (previousBreakEnd !== null && currentTimeInMinutes >= previousBreakEnd && currentTimeInMinutes < startTimeInMinutes) {
-          return previousRowId;
-        }
+        if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes < endTimeInMinutes) return row.id;
+        if (previousBreakEnd !== null && currentTimeInMinutes >= previousBreakEnd && currentTimeInMinutes < startTimeInMinutes) return previousRowId;
         previousBreakEnd = endTimeInMinutes;
         previousRowId = row.id;
       }
@@ -210,131 +186,102 @@ export default function PublicPage() {
   }, [filteredDuties]);
 
   return (
-    <div className="min-h-screen bg-[#f0fdf4] flex items-center justify-center p-5 font-inter bg-[radial-gradient(#bbf7d0_1px,transparent_1px)] bg-[length:30px_30px]">
-      <div id="device-screen" className="w-[640px] h-[500px] bg-white relative flex flex-col overflow-hidden shadow-[0_10px_40px_rgba(34,197,94,0.2)] border-8 border-[#22c55e] rounded-xl shrink-0">
-        <div id="content-area" className="w-full h-[470px] overflow-hidden p-[6px] flex flex-col z-10">
-          
-          <div className="flex items-center justify-between gap-2 mb-2 bg-white p-1 px-3 rounded-lg shadow-md border-2 border-green-100 min-h-[3rem] shrink-0 relative overflow-hidden">
-            <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
-              <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor" className="text-yellow-500">
-                <path d="M12,7L14,12L19,14L14,16L12,21L10,16L5,14L10,12L12,7M12,3.5L9.5,9.5L3.5,12L9.5,14.5L12,20.5L14.5,14.5L20.5,12L14.5,9.5L12,3.5Z" />
-              </svg>
+    <div className="flex flex-col bg-[#f8f9ff] selection:bg-emerald-100" style={{ width: '640px', height: '500px', margin: '0', overflow: 'hidden' }}>
+      <main className="flex-1 flex flex-col p-3 overflow-hidden gap-3">
+        {/* Countdown Section - Modern Slate Update */}
+        <section className="bg-[#1e293b] rounded-xl p-4 flex flex-col gap-2 shadow-lg">
+          <div className="flex justify-between items-end">
+            <div className="flex flex-col">
+              <span className="text-[0.625rem] font-bold text-slate-400 uppercase tracking-widest">DYŻURY</span>
+              <h2 className="text-2xl font-extrabold text-white tracking-tighter">
+                {timer.visible ? `${timer.label}: ${timer.currentTime}` : `DYŻURY: ${dayNameMap[currentDayId]?.toUpperCase()}`}
+              </h2>
             </div>
-
-            <div className="flex items-center gap-2 z-10">
-              <span className="text-2xl">🌸</span>
-              <div id="current-day-title" className="uppercase tracking-wide whitespace-nowrap pt-1 font-impact text-[22px] font-bold text-[#15803d]">
-                DYŻURY: {dayNameMap[currentDayId]?.toUpperCase() || 'ŁADOWANIE...'}
+            <div className="text-right">
+              <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                {dayNameMap[currentDayId]?.toUpperCase()}, {timer.currentTime}
               </div>
+              <span className="text-[0.625rem] font-semibold text-emerald-400">
+                {timer.visible ? `POZOSTAŁO: ${timer.countdown}` : 'BRAK LEKCJI'}
+              </span>
             </div>
-
-            {timer.visible && (
-              <div id="timer-container" className="flex items-center gap-3 flex-grow justify-end z-10">
-                <div className="flex flex-col items-end leading-none">
-                  <span className={`text-[9px] font-bold uppercase tracking-wider ${timer.isLesson ? 'text-green-700' : 'text-orange-600'}`}>
-                    {timer.label}
-                  </span>
-                  <span className="text-lg font-mono font-bold text-gray-800">{timer.countdown}</span>
-                </div>
-                
-                <div className="w-28 bg-green-50 rounded-full h-3 overflow-hidden border border-green-100 shadow-inner">
-                  <div 
-                    className={`h-full rounded-full spring-stripe ${timer.isLesson ? 'bg-green-500' : 'bg-orange-400'}`} 
-                    style={{ width: `${timer.progress}%`, transition: 'width 1s linear' }}
-                  ></div>
-                </div>
-              </div>
-            )}
           </div>
+          {/* Progress Bar - Emerald Update */}
+          <div className="h-2 w-full bg-slate-700/50 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)] transition-all duration-1000 ease-linear"
+              style={{ width: `${timer.progress}%` }}
+            ></div>
+          </div>
+        </section>
 
-          <main className="bg-white/90 rounded-lg shadow-lg overflow-hidden border border-green-100 flex-grow relative backdrop-blur-sm">
-            <div className="h-full w-full overflow-auto">
-              <table className="w-full text-gray-700 border-collapse table-fixed">
-                <thead className="text-white uppercase tracking-wider sticky top-0 z-10 shadow-sm text-[8px] bg-[#166534]">
-                  <tr>
-                    <th className="w-[18px] p-[1px_2px] bg-[#15803d] rounded-tl-lg">Nr</th>
-                    <th className="w-[35px] p-[1px_2px] bg-[#166534]">Czas</th>
-                    <th className="p-[1px_2px] bg-[#166534]">Zielony</th>
-                    <th className="p-[1px_2px] bg-[#9333ea]">Fiolet</th>
-                    <th className="p-[1px_2px] bg-[#ea580c]">Poma.</th>
-                    <th className="p-[1px_2px] bg-gray-500">Undrg.</th>
-                    <th className="p-[1px_2px] bg-[#eab308] text-[#422006] font-bold">Żółty</th>
-                    <th className="p-[1px_2px] bg-[#dc2626]">Czerw.</th>
-                    <th className="p-[1px_2px] bg-[#0284c7]">Nieb.</th>
-                    <th className="p-[1px_2px] bg-gray-500">Parter</th>
-                    <th className="p-[1px_2px] bg-gray-500">SG</th>
-                    <th className="w-[45px] p-[1px_2px] bg-gray-600 rounded-tr-lg">Obiad</th>
+        {/* Table Container */}
+        <section className="flex-1 bg-white rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.02)] border border-slate-100 overflow-hidden flex flex-col">
+          <div className="overflow-x-auto h-full">
+            <table className="w-full text-left border-collapse table-fixed">
+              <thead className="bg-[#dce9ff] sticky top-0 z-10">
+                <tr className="text-[0.55rem] font-bold text-slate-600 uppercase tracking-tighter border-b border-slate-200">
+                  <th className="py-2 px-1 text-center w-[25px]">NR</th>
+                  <th className="py-2 px-1 w-[65px]">CZAS</th>
+                  <th className="py-2 px-1 text-emerald-800">ZIELONY</th>
+                  <th className="py-2 px-1 text-indigo-800">FIOLET</th>
+                  <th className="py-2 px-1 text-orange-800">POMA.</th>
+                  <th className="py-2 px-1 text-slate-700">UNDRG.</th>
+                  <th className="py-2 px-1 text-yellow-800">ŻÓŁTY</th>
+                  <th className="py-2 px-1 text-red-800">CZERW.</th>
+                  <th className="py-2 px-1 text-blue-800">NIEB.</th>
+                  <th className="py-2 px-1">PARTER</th>
+                  <th className="py-2 px-1">SG</th>
+                  <th className="py-2 px-1">OBIAD</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {filteredDuties.map((row) => (
+                  <tr 
+                    key={row.id} 
+                    className={`
+                      ${highlightedRowId === row.id 
+                        ? 'bg-[#15803d] text-white shadow-inner font-semibold' 
+                        : 'text-slate-700 hover:bg-slate-50 transition-colors'}
+                    `}
+                  >
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-[0.625rem]'}`}>
+                      {row.nr}
+                    </td>
+                    <td className={`py-1.5 px-1 font-mono ${highlightedRowId === row.id ? 'text-emerald-100' : 'text-[0.625rem]'}`}>
+                      {row.time}
+                    </td>
+                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.zielony === "-" ? "" : row.zielony}</td>
+                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.fiolet === "-" ? "" : row.fiolet}</td>
+                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.poma === "-" ? "" : row.poma}</td>
+                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.undrg === "-" ? "" : row.undrg}</td>
+                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.zolty === "-" ? "" : row.zolty}</td>
+                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.czerw === "-" ? "" : row.czerw}</td>
+                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.nieb === "-" ? "" : row.nieb}</td>
+                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.parter === "-" ? "" : row.parter}</td>
+                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.sg === "-" ? "" : row.sg}</td>
+                    <td className={`py-1.5 px-1 truncate font-bold ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-[0.55rem] text-slate-400'}`}>
+                      {row.obiad === "-" ? "" : row.obiad}
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="text-[9px]">
-                  {filteredDuties.map((row) => (
-                    <tr 
-                      key={row.id} 
-                      className={`
-                        ${highlightedRowId === row.id ? 'animate-[pulse-spring_3s_infinite_ease-in-out] font-bold border-l-4 border-[#22c55e] bg-[#dcfce7]' : 'odd:bg-[#f7fee7] even:bg-white'}
-                        border-b border-[#f0fdf4]
-                      `}
-                    >
-                      <td className={`p-[1px_2px] text-center ${highlightedRowId === row.id ? 'text-[#14532d]' : 'text-green-600 font-bold'}`}>{row.nr}</td>
-                      <td className="p-[1px_2px] text-center font-medium">{row.time}</td>
-                      <Cell text={row.zielony} highlighted={highlightedRowId === row.id} />
-                      <Cell text={row.fiolet} highlighted={highlightedRowId === row.id} />
-                      <Cell text={row.poma} highlighted={highlightedRowId === row.id} />
-                      <Cell text={row.undrg} highlighted={highlightedRowId === row.id} />
-                      <Cell text={row.zolty} highlighted={highlightedRowId === row.id} />
-                      <Cell text={row.czerw} highlighted={highlightedRowId === row.id} />
-                      <Cell text={row.nieb} highlighted={highlightedRowId === row.id} />
-                      <Cell text={row.parter} highlighted={highlightedRowId === row.id} />
-                      <Cell text={row.sg} highlighted={highlightedRowId === row.id} />
-                      <Cell text={row.obiad} highlighted={highlightedRowId === row.id} />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </main>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
 
-        <div id="safe-margin" className="h-[30px] w-full bg-[repeating-linear-gradient(45deg,#22c55e,#22c55e_10px,#86efac_10px,#86efac_20px)] opacity-90"></div>
-      </div>
-      
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        
-        @font-face {
-          font-family: 'Impact';
-          src: local('Impact');
-        }
-
-        .font-impact {
-          font-family: Impact, "Arial Black", sans-serif;
-        }
-
-        @keyframes pulse-spring {
-          0%, 100% { background-color: #f0fdf4; border-left-color: #22c55e; box-shadow: inset 0 0 10px rgba(34, 197, 94, 0.1); }
-          50% { background-color: #dcfce7; border-left-color: #16a34a; box-shadow: inset 0 0 15px rgba(34, 197, 94, 0.3); }
-        }
-
-        .spring-stripe {
-          background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.4) 75%, transparent 75%, transparent);
-          background-size: 20px 20px;
-          animation: move-stripes 1.5s linear infinite;
-        }
-
-        @keyframes move-stripes {
-          from { background-position: 0 0; }
-          to { background-position: 20px 20px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body {
+          width: 640px;
+          height: 500px;
+          margin: 0;
+          overflow: hidden;
+          background-color: #f8f9ff;
+          font-family: 'Inter', sans-serif;
         }
       `}</style>
     </div>
-  );
-}
-
-function Cell({ text, highlighted }: { text: string; highlighted: boolean }) {
-  const isEmpty = text === "-" || text.trim() === "";
-  return (
-    <td className={`p-[1px_2px] text-center break-words overflow-hidden ${isEmpty ? 'text-[#cbd5e1] text-[8px]' : highlighted ? 'text-[#14532d]' : ''}`}>
-      {text}
-    </td>
   );
 }
