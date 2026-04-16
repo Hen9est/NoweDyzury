@@ -209,27 +209,27 @@ export default function PublicPage() {
         className="flex flex-col bg-background overflow-hidden shadow-2xl rounded-3xl border-[12px] border-[#ccdbf3]" 
         style={{ width: '640px', height: '500px' }}
       >
-        <main className="flex-1 flex flex-col p-4 overflow-hidden gap-3">
-          {/* Countdown Section */}
-          <section className="bg-[#1e293b] rounded-2xl p-4 flex flex-col gap-2 shadow-lg shrink-0">
+        <main className="flex-1 flex flex-col p-4 overflow-hidden gap-2">
+          {/* Countdown Section - Narrowed */}
+          <section className="bg-[#1e293b] rounded-2xl py-2 px-4 flex flex-col gap-1 shadow-lg shrink-0">
             <div className="flex justify-between items-end">
               <div className="flex flex-col">
-                <span className="text-label-sm font-bold text-slate-400 uppercase tracking-widest">DYŻURY</span>
-                <h2 className="text-2xl font-extrabold text-white tracking-tighter leading-none">
+                <span className="text-xxs font-bold text-slate-400 uppercase tracking-widest leading-tight">DYŻURY</span>
+                <h2 className="text-xl font-extrabold text-white tracking-tighter leading-none">
                   {timer.visible ? `${timer.label}: ${timer.currentTime}` : `DYŻURY: ${dayNameMap[currentDayId]?.toUpperCase()}`}
                 </h2>
               </div>
               <div className="text-right">
-                <div className="text-label-sm font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                <div className="text-xxs font-bold text-slate-400 uppercase tracking-wider leading-tight">
                   {dayNameMap[currentDayId]?.toUpperCase()}, {timer.currentTime}
                 </div>
-                <span className="text-label-sm font-semibold text-emerald-400">
+                <span className="text-xxs font-semibold text-emerald-400 leading-tight">
                   {timer.visible ? `POZOSTAŁO: ${timer.countdown}` : 'BRAK LEKCJI'}
                 </span>
               </div>
             </div>
             {/* Progress Bar */}
-            <div className="h-2 w-full bg-slate-700/50 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-700/50 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)] transition-all duration-1000 ease-linear"
                 style={{ width: `${timer.progress}%` }}
@@ -308,6 +308,9 @@ export default function PublicPage() {
               </table>
             </div>
           </section>
+          
+          {/* Bottom Margin - 20% of 500px is 100px */}
+          <div className="h-[100px] shrink-0" />
         </main>
       </div>
     </div>
