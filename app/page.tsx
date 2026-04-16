@@ -189,27 +189,27 @@ export default function PublicPage() {
     <div className="flex flex-col bg-[#f8f9ff] selection:bg-emerald-100" style={{ width: '640px', height: '500px', margin: '0', overflow: 'hidden' }}>
       <main className="flex-1 flex flex-col p-3 overflow-hidden gap-3">
         {/* Countdown Section - Modern Slate Update */}
-        <section className="bg-[#1e293b] rounded-xl p-4 flex flex-col gap-2 shadow-lg">
+        <section className="bg-[#1e293b] rounded-xl p-5 flex flex-col gap-3 shadow-lg shrink-0">
           <div className="flex justify-between items-end">
             <div className="flex flex-col">
-              <span className="text-[0.625rem] font-bold text-slate-400 uppercase tracking-widest">DYŻURY</span>
-              <h2 className="text-2xl font-extrabold text-white tracking-tighter">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">DYŻURY</span>
+              <h2 className="text-3xl font-extrabold text-white tracking-tighter leading-none mt-1">
                 {timer.visible ? `${timer.label}: ${timer.currentTime}` : `DYŻURY: ${dayNameMap[currentDayId]?.toUpperCase()}`}
               </h2>
             </div>
             <div className="text-right">
-              <div className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+              <div className="text-[0.75rem] font-bold text-slate-400 uppercase tracking-wider mb-1">
                 {dayNameMap[currentDayId]?.toUpperCase()}, {timer.currentTime}
               </div>
-              <span className="text-[0.625rem] font-semibold text-emerald-400">
+              <span className="text-sm font-black text-emerald-400 tracking-tight">
                 {timer.visible ? `POZOSTAŁO: ${timer.countdown}` : 'BRAK LEKCJI'}
               </span>
             </div>
           </div>
           {/* Progress Bar - Emerald Update */}
-          <div className="h-2 w-full bg-slate-700/50 rounded-full overflow-hidden">
+          <div className="h-3 w-full bg-slate-700/50 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)] transition-all duration-1000 ease-linear"
+              className="h-full bg-emerald-500 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.5)] transition-all duration-1000 ease-linear"
               style={{ width: `${timer.progress}%` }}
             ></div>
           </div>
@@ -220,19 +220,19 @@ export default function PublicPage() {
           <div className="overflow-x-auto h-full">
             <table className="w-full text-left border-collapse table-fixed">
               <thead className="bg-[#dce9ff] sticky top-0 z-10">
-                <tr className="text-[0.55rem] font-bold text-slate-600 uppercase tracking-tighter border-b border-slate-200">
-                  <th className="py-2 px-1 text-center w-[25px]">NR</th>
-                  <th className="py-2 px-1 w-[65px]">CZAS</th>
-                  <th className="py-2 px-1 text-emerald-800">ZIELONY</th>
-                  <th className="py-2 px-1 text-indigo-800">FIOLET</th>
-                  <th className="py-2 px-1 text-orange-800">POMA.</th>
-                  <th className="py-2 px-1 text-slate-700">UNDRG.</th>
-                  <th className="py-2 px-1 text-yellow-800">ŻÓŁTY</th>
-                  <th className="py-2 px-1 text-red-800">CZERW.</th>
-                  <th className="py-2 px-1 text-blue-800">NIEB.</th>
-                  <th className="py-2 px-1">PARTER</th>
-                  <th className="py-2 px-1">SG</th>
-                  <th className="py-2 px-1">OBIAD</th>
+                <tr className="text-[0.65rem] font-black text-slate-600 uppercase tracking-tight border-b border-slate-200">
+                  <th className="py-3 px-1 text-center w-[30px]">NR</th>
+                  <th className="py-3 px-1 w-[75px]">CZAS</th>
+                  <th className="py-3 px-1 text-emerald-800">ZIELONY</th>
+                  <th className="py-3 px-1 text-indigo-800">FIOLET</th>
+                  <th className="py-3 px-1 text-orange-800">POMA.</th>
+                  <th className="py-3 px-1 text-slate-700">UNDRG.</th>
+                  <th className="py-3 px-1 text-yellow-800">ŻÓŁTY</th>
+                  <th className="py-3 px-1 text-red-800">CZERW.</th>
+                  <th className="py-3 px-1 text-blue-800">NIEB.</th>
+                  <th className="py-3 px-1">PARTER</th>
+                  <th className="py-3 px-1">SG</th>
+                  <th className="py-3 px-1 text-center">OBIAD</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -241,26 +241,26 @@ export default function PublicPage() {
                     key={row.id} 
                     className={`
                       ${highlightedRowId === row.id 
-                        ? 'bg-[#15803d] text-white font-bold' 
-                        : 'text-slate-700 hover:bg-slate-50 transition-colors'}
+                        ? 'bg-[#15803d] text-white font-black shadow-inner' 
+                        : 'text-slate-800 hover:bg-slate-50 transition-colors'}
                     `}
                   >
-                    <td className={`py-1.5 px-1 text-center font-mono ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-500'} text-[0.55rem]`}>
+                    <td className={`py-2 px-1 text-center font-mono font-black ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-400'} text-[0.8rem]`}>
                       {row.nr}
                     </td>
-                    <td className={`py-1.5 px-1 font-mono ${highlightedRowId === row.id ? 'text-emerald-100' : 'text-slate-600'} text-[0.55rem]`}>
-                      {row.time}
+                    <td className={`py-2 px-1 font-mono font-bold leading-tight ${highlightedRowId === row.id ? 'text-emerald-100' : 'text-slate-600'} text-[0.75rem]`}>
+                      {row.time.replace('-', '\n')}
                     </td>
-                    <td className="py-1.5 px-1 text-[0.55rem] truncate">{row.zielony === "-" ? "" : row.zielony}</td>
-                    <td className="py-1.5 px-1 text-[0.55rem] truncate">{row.fiolet === "-" ? "" : row.fiolet}</td>
-                    <td className="py-1.5 px-1 text-[0.55rem] truncate">{row.poma === "-" ? "" : row.poma}</td>
-                    <td className="py-1.5 px-1 text-[0.55rem] truncate">{row.undrg === "-" ? "" : row.undrg}</td>
-                    <td className="py-1.5 px-1 text-[0.55rem] truncate">{row.zolty === "-" ? "" : row.zolty}</td>
-                    <td className="py-1.5 px-1 text-[0.55rem] truncate">{row.czerw === "-" ? "" : row.czerw}</td>
-                    <td className="py-1.5 px-1 text-[0.55rem] truncate">{row.nieb === "-" ? "" : row.nieb}</td>
-                    <td className="py-1.5 px-1 text-[0.55rem] truncate">{row.parter === "-" ? "" : row.parter}</td>
-                    <td className="py-1.5 px-1 text-[0.55rem] truncate">{row.sg === "-" ? "" : row.sg}</td>
-                    <td className={`py-1.5 px-1 text-[0.55rem] truncate font-bold ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-400'}`}>
+                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.zielony === "-" ? "" : row.zielony}</td>
+                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.fiolet === "-" ? "" : row.fiolet}</td>
+                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.poma === "-" ? "" : row.poma}</td>
+                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.undrg === "-" ? "" : row.undrg}</td>
+                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.zolty === "-" ? "" : row.zolty}</td>
+                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.czerw === "-" ? "" : row.czerw}</td>
+                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.nieb === "-" ? "" : row.nieb}</td>
+                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.parter === "-" ? "" : row.parter}</td>
+                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.sg === "-" ? "" : row.sg}</td>
+                    <td className={`py-2 px-1 text-[0.75rem] text-center font-black break-words ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-400'}`}>
                       {row.obiad === "-" ? "" : row.obiad}
                     </td>
                   </tr>
