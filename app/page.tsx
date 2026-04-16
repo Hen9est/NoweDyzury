@@ -220,19 +220,19 @@ export default function PublicPage() {
           <div className="overflow-x-auto h-full">
             <table className="w-full text-left border-collapse table-fixed">
               <thead className="bg-[#dce9ff] sticky top-0 z-10">
-                <tr className="text-[0.65rem] font-black text-slate-600 uppercase tracking-tight border-b border-slate-200">
-                  <th className="py-3 px-1 text-center w-[30px]">NR</th>
-                  <th className="py-3 px-1 w-[75px]">CZAS</th>
-                  <th className="py-3 px-1 text-emerald-800">ZIELONY</th>
-                  <th className="py-3 px-1 text-indigo-800">FIOLET</th>
-                  <th className="py-3 px-1 text-orange-800">POMA.</th>
-                  <th className="py-3 px-1 text-slate-700">UNDRG.</th>
-                  <th className="py-3 px-1 text-yellow-800">ŻÓŁTY</th>
-                  <th className="py-3 px-1 text-red-800">CZERW.</th>
-                  <th className="py-3 px-1 text-blue-800">NIEB.</th>
-                  <th className="py-3 px-1">PARTER</th>
-                  <th className="py-3 px-1">SG</th>
-                  <th className="py-3 px-1 text-center">OBIAD</th>
+                <tr className="text-[0.6rem] font-black text-slate-600 uppercase tracking-tight border-b border-slate-200">
+                  <th className="py-2 px-1 text-center w-[20px]">№</th>
+                  <th className="py-2 px-1 w-[55px] text-center">CZAS</th>
+                  <th className="py-2 px-1 text-emerald-800">ZIELONY</th>
+                  <th className="py-2 px-1 text-indigo-800">FIOLET</th>
+                  <th className="py-2 px-1 text-orange-800">POMA.</th>
+                  <th className="py-2 px-1 text-slate-700">UNDRG.</th>
+                  <th className="py-2 px-1 text-yellow-800">ŻÓŁTY</th>
+                  <th className="py-2 px-1 text-red-800">CZERW.</th>
+                  <th className="py-2 px-1 text-blue-800">NIEB.</th>
+                  <th className="py-2 px-1">PART.</th>
+                  <th className="py-2 px-1">SG</th>
+                  <th className="py-2 px-1 text-center">OBIAD</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -241,26 +241,26 @@ export default function PublicPage() {
                     key={row.id} 
                     className={`
                       ${highlightedRowId === row.id 
-                        ? 'bg-[#15803d] text-white font-black shadow-inner' 
+                        ? 'bg-[#15803d] text-white shadow-inner' 
                         : 'text-slate-800 hover:bg-slate-50 transition-colors'}
                     `}
                   >
-                    <td className={`py-2 px-1 text-center font-mono font-black ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-400'} text-[0.8rem]`}>
+                    <td className={`py-1 px-0.5 text-center font-mono font-black ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-300'} text-[0.7rem]`}>
                       {row.nr}
                     </td>
-                    <td className={`py-2 px-1 font-mono font-bold leading-tight ${highlightedRowId === row.id ? 'text-emerald-100' : 'text-slate-600'} text-[0.75rem]`}>
+                    <td className={`py-1 px-0.5 font-mono font-bold leading-none text-center ${highlightedRowId === row.id ? 'text-emerald-100' : 'text-slate-500'} text-[0.65rem]`}>
                       {row.time.replace('-', '\n')}
                     </td>
-                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.zielony === "-" ? "" : row.zielony}</td>
-                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.fiolet === "-" ? "" : row.fiolet}</td>
-                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.poma === "-" ? "" : row.poma}</td>
-                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.undrg === "-" ? "" : row.undrg}</td>
-                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.zolty === "-" ? "" : row.zolty}</td>
-                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.czerw === "-" ? "" : row.czerw}</td>
-                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.nieb === "-" ? "" : row.nieb}</td>
-                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.parter === "-" ? "" : row.parter}</td>
-                    <td className="py-2 px-1 text-[0.85rem] font-bold leading-none break-words">{row.sg === "-" ? "" : row.sg}</td>
-                    <td className={`py-2 px-1 text-[0.75rem] text-center font-black break-words ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-400'}`}>
+                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.zielony === "-" ? "" : row.zielony}</td>
+                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.fiolet === "-" ? "" : row.fiolet}</td>
+                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.poma === "-" ? "" : row.poma}</td>
+                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.undrg === "-" ? "" : row.undrg}</td>
+                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.zolty === "-" ? "" : row.zolty}</td>
+                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.czerw === "-" ? "" : row.czerw}</td>
+                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.nieb === "-" ? "" : row.nieb}</td>
+                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.parter === "-" ? "" : row.parter}</td>
+                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.sg === "-" ? "" : row.sg}</td>
+                    <td className={`py-1 px-1 text-[0.7rem] text-center font-black break-words ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-300'}`}>
                       {row.obiad === "-" ? "" : row.obiad}
                     </td>
                   </tr>
