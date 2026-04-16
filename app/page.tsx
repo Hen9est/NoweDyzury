@@ -210,23 +210,15 @@ export default function PublicPage() {
         style={{ width: '640px', height: '500px' }}
       >
         <main className="flex-1 flex flex-col p-4 overflow-hidden gap-2">
-          {/* Countdown Section - Narrowed */}
-          <section className="bg-[#1e293b] rounded-2xl py-2 px-4 flex flex-col gap-1 shadow-lg shrink-0">
-            <div className="flex justify-between items-end">
-              <div className="flex flex-col">
-                <span className="text-xxs font-bold text-slate-400 uppercase tracking-widest leading-tight">DYŻURY</span>
-                <h2 className="text-xl font-extrabold text-white tracking-tighter leading-none">
-                  {timer.visible ? `${timer.label}: ${timer.currentTime}` : `DYŻURY: ${dayNameMap[currentDayId]?.toUpperCase()}`}
-                </h2>
-              </div>
-              <div className="text-right">
-                <div className="text-xxs font-bold text-slate-400 uppercase tracking-wider leading-tight">
-                  {dayNameMap[currentDayId]?.toUpperCase()}, {timer.currentTime}
-                </div>
-                <span className="text-xxs font-semibold text-emerald-400 leading-tight">
-                  {timer.visible ? `POZOSTAŁO: ${timer.countdown}` : 'BRAK LEKCJI'}
-                </span>
-              </div>
+          {/* Simplified Countdown Section */}
+          <section className="bg-[#1e293b] rounded-2xl py-3 px-5 flex flex-col gap-1.5 shadow-lg shrink-0">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-extrabold text-white tracking-tighter leading-none">
+                {timer.visible ? timer.label : `DYŻURY: ${dayNameMap[currentDayId]?.toUpperCase()}`}
+              </h2>
+              <span className="text-xxs font-bold text-emerald-400 leading-none uppercase tracking-wider">
+                {timer.visible ? `POZOSTAŁO: ${timer.countdown}` : 'BRAK LEKCJI'}
+              </span>
             </div>
             {/* Progress Bar */}
             <div className="h-1.5 w-full bg-slate-700/50 rounded-full overflow-hidden">
@@ -237,38 +229,38 @@ export default function PublicPage() {
             </div>
           </section>
 
-          {/* Table Container */}
+          {/* Table Container - No Scroll */}
           <section className="flex-1 bg-surface-container-lowest rounded-2xl shadow-inner border border-outline-variant/20 overflow-hidden flex flex-col">
-            <div className="overflow-auto h-full">
-              <table className="w-full text-left border-collapse table-fixed">
-                <thead className="bg-surface-container-high sticky top-0 z-10 shadow-sm">
+            <div className="h-full">
+              <table className="w-full text-left border-collapse table-fixed h-full">
+                <thead className="bg-surface-container-high z-10 shadow-sm">
                   <tr className="text-tiny font-bold text-on-surface-variant uppercase tracking-tighter border-b border-outline-variant/20">
-                    <th className="py-2 px-1 text-center w-[25px]">NR</th>
-                    <th className="py-2 px-1 w-[55px]">CZAS</th>
-                    <th className="py-2 px-0.5 text-emerald-800">ZIELONY</th>
-                    <th className="py-2 px-0.5 text-indigo-800">FIOLET</th>
-                    <th className="py-2 px-0.5 text-orange-800">POMA.</th>
-                    <th className="py-2 px-0.5 text-slate-700">UNDRG.</th>
-                    <th className="py-2 px-0.5 text-yellow-800">ŻÓŁTY</th>
-                    <th className="py-2 px-0.5 text-red-800">CZERW.</th>
-                    <th className="py-2 px-0.5 text-blue-800">NIEB.</th>
-                    <th className="py-2 px-0.5">PARTER</th>
-                    <th className="py-2 px-0.5">SG</th>
-                    <th className="py-2 px-0.5">OBIAD</th>
+                    <th className="py-1.5 px-1 text-center w-[25px]">NR</th>
+                    <th className="py-1.5 px-1 w-[55px]">CZAS</th>
+                    <th className="py-1.5 px-0.5 text-emerald-800">ZIELONY</th>
+                    <th className="py-1.5 px-0.5 text-indigo-800">FIOLET</th>
+                    <th className="py-1.5 px-0.5 text-orange-800">POMA.</th>
+                    <th className="py-1.5 px-0.5 text-slate-700">UNDRG.</th>
+                    <th className="py-1.5 px-0.5 text-yellow-800">ŻÓŁTY</th>
+                    <th className="py-1.5 px-0.5 text-red-800">CZERW.</th>
+                    <th className="py-1.5 px-0.5 text-blue-800">NIEB.</th>
+                    <th className="py-1.5 px-0.5">PARTER</th>
+                    <th className="py-1.5 px-0.5">SG</th>
+                    <th className="py-1.5 px-0.5">OBIAD</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-outline-variant/10">
                   {filteredDuties.map((row, index) => {
                     const isActive = highlightedRowId === row.id;
-                    const baseCellClass = isActive ? "py-1 px-0.5 font-bold text-white text-tiny" : "py-1 px-0.5 text-on-surface/80 text-tiny";
+                    const baseCellClass = isActive ? "py-0.5 px-0.5 font-bold text-white text-tiny" : "py-0.5 px-0.5 text-on-surface/80 text-tiny";
                     const greyCellClass = isActive ? "bg-slate-500 text-white" : "text-on-surface/50";
                     
                     return (
                       <tr key={row.id} className={`${isActive ? '' : (index % 2 === 1 ? 'bg-surface-container-low/30' : '')}`}>
-                        <td className={`py-1 px-1 text-center font-mono font-bold text-tiny ${greyCellClass}`}>
+                        <td className={`py-0.5 px-1 text-center font-mono font-bold text-tiny ${greyCellClass}`}>
                           {row.nr}
                         </td>
-                        <td className={`py-1 px-1 ${greyCellClass}`}>
+                        <td className={`py-0.5 px-1 ${greyCellClass}`}>
                           {formatTime(row.time)}
                         </td>
                         <td className={`${baseCellClass} ${isActive ? 'bg-emerald-600' : ''}`}>
