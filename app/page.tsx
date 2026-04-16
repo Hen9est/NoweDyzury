@@ -245,22 +245,22 @@ export default function PublicPage() {
                         : 'text-slate-700 hover:bg-slate-50 transition-colors'}
                     `}
                   >
-                    <td className={`py-1.5 px-1 text-center font-mono font-bold ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-[0.625rem]'}`}>
+                    <td className={`py-1.5 px-1 text-center font-mono font-bold ${highlightedRowId === row.id ? 'text-emerald-200 text-[0.55rem]' : 'text-[0.625rem]'}`}>
                       {row.nr}
                     </td>
-                    <td className={`py-1.5 px-1 font-mono ${highlightedRowId === row.id ? 'text-emerald-100' : 'text-[0.625rem]'}`}>
+                    <td className={`py-1.5 px-1 font-mono ${highlightedRowId === row.id ? 'text-emerald-100 text-[0.55rem]' : 'text-[0.625rem]'}`}>
                       {row.time}
                     </td>
-                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.zielony === "-" ? "" : row.zielony}</td>
-                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.fiolet === "-" ? "" : row.fiolet}</td>
-                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.poma === "-" ? "" : row.poma}</td>
-                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.undrg === "-" ? "" : row.undrg}</td>
-                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.zolty === "-" ? "" : row.zolty}</td>
-                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.czerw === "-" ? "" : row.czerw}</td>
-                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.nieb === "-" ? "" : row.nieb}</td>
-                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.parter === "-" ? "" : row.parter}</td>
-                    <td className={`py-1.5 px-1 truncate ${highlightedRowId === row.id ? 'text-white' : 'text-[0.55rem]'}`}>{row.sg === "-" ? "" : row.sg}</td>
-                    <td className={`py-1.5 px-1 truncate font-bold ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-[0.55rem] text-slate-400'}`}>
+                    <td className={`py-1.5 px-1 ${highlightedRowId === row.id ? 'text-white text-[0.55rem]' : 'text-[0.55rem] truncate'}`}>{row.zielony === "-" ? "" : row.zielony}</td>
+                    <td className={`py-1.5 px-1 ${highlightedRowId === row.id ? 'text-white text-[0.55rem]' : 'text-[0.55rem] truncate'}`}>{row.fiolet === "-" ? "" : row.fiolet}</td>
+                    <td className={`py-1.5 px-1 ${highlightedRowId === row.id ? 'text-white text-[0.55rem]' : 'text-[0.55rem] truncate'}`}>{row.poma === "-" ? "" : row.poma}</td>
+                    <td className={`py-1.5 px-1 ${highlightedRowId === row.id ? 'text-white text-[0.55rem]' : 'text-[0.55rem] truncate'}`}>{row.undrg === "-" ? "" : row.undrg}</td>
+                    <td className={`py-1.5 px-1 ${highlightedRowId === row.id ? 'text-white text-[0.55rem]' : 'text-[0.55rem] truncate'}`}>{row.zolty === "-" ? "" : row.zolty}</td>
+                    <td className={`py-1.5 px-1 ${highlightedRowId === row.id ? 'text-white text-[0.55rem]' : 'text-[0.55rem] truncate'}`}>{row.czerw === "-" ? "" : row.czerw}</td>
+                    <td className={`py-1.5 px-1 ${highlightedRowId === row.id ? 'text-white text-[0.55rem]' : 'text-[0.55rem] truncate'}`}>{row.nieb === "-" ? "" : row.nieb}</td>
+                    <td className={`py-1.5 px-1 ${highlightedRowId === row.id ? 'text-white text-[0.55rem]' : 'text-[0.55rem] truncate'}`}>{row.parter === "-" ? "" : row.parter}</td>
+                    <td className={`py-1.5 px-1 ${highlightedRowId === row.id ? 'text-white text-[0.55rem]' : 'text-[0.55rem] truncate'}`}>{row.sg === "-" ? "" : row.sg}</td>
+                    <td className={`py-1.5 px-1 font-bold ${highlightedRowId === row.id ? 'text-emerald-200 text-[0.55rem]' : 'text-[0.55rem] text-slate-400 truncate'}`}>
                       {row.obiad === "-" ? "" : row.obiad}
                     </td>
                   </tr>
