@@ -245,22 +245,22 @@ export default function PublicPage() {
                         : 'text-slate-800 hover:bg-slate-50 transition-colors'}
                     `}
                   >
-                    <td className={`py-1 px-0.5 text-center font-mono font-black ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-300'} text-[0.7rem]`}>
+                    <td className={`py-1.5 px-0.5 text-center font-mono font-black ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-300'} text-[0.65rem]`}>
                       {row.nr}
                     </td>
-                    <td className={`py-1 px-0.5 font-mono font-bold leading-none text-center ${highlightedRowId === row.id ? 'text-emerald-100' : 'text-slate-500'} text-[0.65rem]`}>
+                    <td className={`py-1.5 px-0.5 font-mono font-bold leading-none text-center ${highlightedRowId === row.id ? 'text-emerald-100' : 'text-slate-500'} text-[0.6rem]`}>
                       {row.time.replace('-', '\n')}
                     </td>
-                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.zielony === "-" ? "" : row.zielony}</td>
-                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.fiolet === "-" ? "" : row.fiolet}</td>
-                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.poma === "-" ? "" : row.poma}</td>
-                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.undrg === "-" ? "" : row.undrg}</td>
-                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.zolty === "-" ? "" : row.zolty}</td>
-                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.czerw === "-" ? "" : row.czerw}</td>
-                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.nieb === "-" ? "" : row.nieb}</td>
-                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.parter === "-" ? "" : row.parter}</td>
-                    <td className={`py-1 px-1 text-[0.75rem] font-bold leading-[1.1] break-words ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.sg === "-" ? "" : row.sg}</td>
-                    <td className={`py-1 px-1 text-[0.7rem] text-center font-black break-words ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-300'}`}>
+                    <td className={`py-1.5 px-1 text-[0.65rem] font-bold truncate ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.zielony === "-" ? "" : row.zielony}</td>
+                    <td className={`py-1.5 px-1 text-[0.65rem] font-bold truncate ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.fiolet === "-" ? "" : row.fiolet}</td>
+                    <td className={`py-1.5 px-1 text-[0.65rem] font-bold truncate ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.poma === "-" ? "" : row.poma}</td>
+                    <td className={`py-1.5 px-1 text-[0.65rem] font-bold truncate ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.undrg === "-" ? "" : row.undrg}</td>
+                    <td className={`py-1.5 px-1 text-[0.65rem] font-bold truncate ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.zolty === "-" ? "" : row.zolty}</td>
+                    <td className={`py-1.5 px-1 text-[0.65rem] font-bold truncate ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.czerw === "-" ? "" : row.czerw}</td>
+                    <td className={`py-1.5 px-1 text-[0.65rem] font-bold truncate ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.nieb === "-" ? "" : row.nieb}</td>
+                    <td className={`py-1.5 px-1 text-[0.65rem] font-bold truncate ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.parter === "-" ? "" : row.parter}</td>
+                    <td className={`py-1.5 px-1 text-[0.65rem] font-bold truncate ${highlightedRowId === row.id ? 'text-white' : ''}`}>{row.sg === "-" ? "" : row.sg}</td>
+                    <td className={`py-1.5 px-1 text-[0.65rem] text-center font-black truncate ${highlightedRowId === row.id ? 'text-emerald-200' : 'text-slate-300'}`}>
                       {row.obiad === "-" ? "" : row.obiad}
                     </td>
                   </tr>
