@@ -1,8 +1,4 @@
-const Database = require('better-sqlite3');
-const path = require('path');
-
-const dbPath = path.resolve(__dirname, '../database.sqlite');
-const db = new Database(dbPath);
+const { sql } = require('@vercel/postgres');
 
 const DEFAULT_DATA = {
     poniedzialek: [
@@ -50,36 +46,44 @@ const DEFAULT_DATA = {
     ]
 };
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS duties (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    day TEXT NOT NULL,
-    nr TEXT,
-    time TEXT,
-    zielony TEXT,
-    fiolet TEXT,
-    poma TEXT,
-    undrg TEXT,
-    zolty TEXT,
-    czerw TEXT,
-    nieb TEXT,
-    parter TEXT,
-    sg TEXT,
-    obiad TEXT
-  )
-`);
+async function seed() {
+  try {
+    await sql`
+      CREATE TABLE IF NOT EXISTS duties (
+        id SERIAL PRIMARY KEY,
+        day TEXT NOT NULL,
+        nr TEXT,
+        time TEXT,
+        zielony TEXT,
+        fiolet TEXT,
+        poma TEXT,
+        undrg TEXT,
+        zolty TEXT,
+        czerw TEXT,
+        nieb TEXT,
+        parter TEXT,
+        sg TEXT,
+        obiad TEXT
+      )
+    `;
 
-db.exec('DELETE FROM duties');
+    await sql`DELETE FROM duties`;
 
-const insert = db.prepare(`
-  INSERT INTO duties (day, nr, time, zielony, fiolet, poma, undrg, zolty, czerw, nieb, parter, sg, obiad)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-`);
-
-for (const [day, rows] of Object.entries(DEFAULT_DATA)) {
-    for (const row of rows) {
-        insert.run(day, ...row);
+    console.log('Inserting initial data...');
+    
+    for (const [day, rows] of Object.entries(DEFAULT_DATA)) {
+        for (const row of rows) {
+            await sql.query(`
+              INSERT INTO duties (day, nr, time, zielony, fiolet, poma, undrg, zolty, czerw, nieb, parter, sg, obiad)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+            `, [day, ...row]);
+        }
     }
+
+    console.log('Seeded database with initial data.');
+  } catch (error) {
+    console.error('Error seeding database:', error);
+  }
 }
 
-console.log('Seeded database with initial data.');
+seed();
