@@ -196,8 +196,24 @@ export default function PublicPage() {
 
   const formatName = (name: string) => {
     if (name === "-" || !name || name === "—") return <span className="text-on-surface/20">—</span>;
-    const parts = name.split(/[\/\s]+/);
-    if (parts.length >= 2) {
+    
+    // Specjalna obsługa dla dwóch osób (rozdzielonych ukośnikiem)
+    if (name.includes('/')) {
+      const parts = name.split('/');
+      return (
+        <div className="flex flex-col leading-[1.05] py-0.5">
+          {parts.map((p, i) => (
+            <div key={i} className="text-[0.45rem] truncate font-medium">
+              {p.trim()}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // Standardowe formatowanie dla jednej osoby
+    const parts = name.split(' ');
+    if (parts.length >= 2 && parts[0].length <= 3) {
         return <div className="leading-tight">{parts[0]}<br />{parts.slice(1).join(' ')}</div>;
     }
     return <div className="leading-tight">{name}</div>;
@@ -239,7 +255,7 @@ export default function PublicPage() {
                     <th className="py-1.5 px-1 w-[55px]">CZAS</th>
                     <th className="py-1.5 px-0.5 text-emerald-800">ZIELONY</th>
                     <th className="py-1.5 px-0.5 text-indigo-800">FIOLET</th>
-                    <th className="py-1.5 px-0.5 text-orange-800">POMA.</th>
+                    <th className="py-1.5 px-0.5 text-orange-800 w-[70px]">POMA.</th>
                     <th className="py-1.5 px-0.5 text-slate-700">UNDRG.</th>
                     <th className="py-1.5 px-0.5 text-yellow-800">ŻÓŁTY</th>
                     <th className="py-1.5 px-0.5 text-red-800">CZERW.</th>
