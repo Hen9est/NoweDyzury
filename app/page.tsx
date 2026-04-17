@@ -276,10 +276,10 @@ export default function PublicPage() {
                     
                     return (
                       <tr key={row.id} className={`${isActive ? '' : (index % 2 === 1 ? 'bg-surface-container-low/30' : '')}`}>
-                        <td className={`py-0.5 px-1 text-center font-mono font-bold text-tiny ${greyCellClass}`}>
+                        <td className={`py-0 px-1 text-center font-mono font-bold text-tiny ${greyCellClass}`}>
                           {row.nr}
                         </td>
-                        <td className={`py-0.5 px-1 ${greyCellClass}`}>
+                        <td className={`py-0 px-1 ${greyCellClass}`}>
                           {formatTime(row.time)}
                         </td>
                         <td className={`${baseCellClass} ${isActive ? 'bg-emerald-600' : ''}`}>
@@ -320,8 +320,8 @@ export default function PublicPage() {
             </div>
           </section>
           
-          {/* Bottom Margin - 20% of 500px is 100px */}
-          <div className="h-[100px] shrink-0" />
+          {/* Reduced Bottom Margin to fit all rows - ~15% of 500px */}
+          <div className="h-[75px] shrink-0" />
         </main>
       </div>
     </div>
