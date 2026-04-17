@@ -197,16 +197,13 @@ export default function PublicPage() {
   const formatName = (name: string) => {
     if (name === "-" || !name || name === "—") return <span className="text-on-surface/20">—</span>;
     
-    // Specjalna obsługa dla dwóch osób (bez linii ukośnej)
     if (name.includes('/')) {
       const parts = name.split('/');
       return (
         <div className="relative w-full h-8 overflow-hidden group">
-          {/* Górne nazwisko (prawy górny róg) */}
           <div className="absolute top-0 right-0 text-[0.42rem] leading-none text-right p-0.5 font-bold w-[90%] truncate">
             {parts[0].trim()}
           </div>
-          {/* Dolne nazwisko (lewy dolny róg) */}
           <div className="absolute bottom-0 left-0 text-[0.42rem] leading-none text-left p-0.5 font-bold w-[90%] truncate">
             {parts[1].trim()}
           </div>
@@ -214,7 +211,6 @@ export default function PublicPage() {
       );
     }
 
-    // Standardowe formatowanie dla jednej osoby
     const parts = name.split(' ');
     if (parts.length >= 2 && parts[0].length <= 3) {
         return <div className="leading-tight">{parts[0]}<br />{parts.slice(1).join(' ')}</div>;
@@ -270,12 +266,17 @@ export default function PublicPage() {
                 </thead>
                 <tbody className="divide-y divide-outline-variant/10">
                   {filteredDuties.map((row, index) => {
-                    const isActive = highlightedRowId === row.id;
-                    const baseCellClass = isActive ? "py-0.5 px-0.5 font-bold text-white text-tiny" : "py-0.5 px-0.5 text-on-surface/80 text-tiny";
+                    const isCurrentRow = highlightedRowId === row.id;
+                    const isActive = isCurrentRow && !timer.isLesson;
+                    const isLessonSeparator = isCurrentRow && timer.isLesson;
+                    
+                    const baseCellClass = isActive ? "py-0 px-0.5 font-bold text-white text-tiny" : "py-0 px-0.5 text-on-surface/80 text-tiny";
                     const greyCellClass = isActive ? "bg-slate-500 text-white" : "text-on-surface/50";
                     
+                    const rowBorderClass = isLessonSeparator ? "border-b-2 border-emerald-500" : "";
+
                     return (
-                      <tr key={row.id} className={`${isActive ? '' : (index % 2 === 1 ? 'bg-surface-container-low/30' : '')}`}>
+                      <tr key={row.id} className={`${isActive ? '' : (index % 2 === 1 ? 'bg-surface-container-low/30' : '')} ${rowBorderClass}`}>
                         <td className={`py-0 px-1 text-center font-mono font-bold text-tiny ${greyCellClass}`}>
                           {row.nr}
                         </td>
@@ -320,7 +321,6 @@ export default function PublicPage() {
             </div>
           </section>
           
-          {/* Reduced Bottom Margin to fit all rows - ~15% of 500px */}
           <div className="h-[75px] shrink-0" />
         </main>
       </div>
