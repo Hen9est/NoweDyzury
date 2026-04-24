@@ -21,6 +21,14 @@ interface Duty {
 
 const dayIdMap = ['niedziela', 'poniedzialek', 'wtorek', 'sroda', 'czwartek', 'piatek', 'sobota'];
 
+const dayNameMap: Record<string, string> = {
+  poniedzialek: 'Poniedziałek',
+  wtorek:       'Wtorek',
+  sroda:        'Środa',
+  czwartek:     'Czwartek',
+  piatek:       'Piątek',
+};
+
 const ZONES: {
   key: keyof Duty;
   label: string;
@@ -260,14 +268,20 @@ export default function PublicPage() {
             animation: timerState.isDuty ? 'pulse-yellow 2s infinite' : 'pulse-green 2s infinite',
             flexShrink: 0,
           }} />
-          <span style={{
-            fontWeight: 700, fontSize: 15,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-            color: C.text,
-          }}>
-            {timerState.visible ? timerState.label : 'Dyżury'}
-          </span>
+          <div>
+            <div style={{
+              fontWeight: 700, fontSize: 15,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: C.text,
+              lineHeight: 1.2,
+            }}>
+              {timerState.visible ? timerState.label : 'Dyżury'}
+            </div>
+            <div style={{ fontSize: 11, color: C.muted, letterSpacing: '0.04em', marginTop: 1 }}>
+              {dayNameMap[currentDayId] ?? currentDayId}
+            </div>
+          </div>
         </div>
 
         {timerState.visible && (
@@ -333,7 +347,7 @@ export default function PublicPage() {
           <tbody>
             {filteredDuties.map((row, index) => {
               const isCurrent = row.id === timerState.highlightedRowId;
-              const isActiveDuty = isCurrent && timerState.isDuty;
+              const isActiveDuty = isCurrent;
               const isPast = currentRowIndex > 0 && index < currentRowIndex;
 
               return (
