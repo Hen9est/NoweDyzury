@@ -236,11 +236,11 @@ export default function PublicPage() {
   const formatName = (value: string, isActive: boolean, activeText: string, isPast: boolean) => {
     if (!value || value === '-' || value === '—') {
       return (
-        <span style={{ color: 'rgba(255,255,255,0.12)', display: 'block', textAlign: 'center', fontSize: 6 }}>—</span>
+        <span style={{ color: 'rgba(255,255,255,0.12)', display: 'block', textAlign: 'center', fontSize: 4 }}>—</span>
       );
     }
     const parts = value.split(/[\/\n]/).map(p => p.trim()).filter(Boolean);
-    const fontSize = isPast ? 5 : 6;
+    const fontSize = isPast ? 4 : 4;
     const color = isActive ? activeText : C.text;
     return (
       <div style={{ textAlign: 'center' }}>
@@ -321,10 +321,10 @@ export default function PublicPage() {
           gap: 10,
           boxSizing: 'border-box',
         }}>
-          <div style={{ fontFamily: C.mono, fontSize: 8, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.18em', color: C.muted }}>
+          <div style={{ fontFamily: C.mono, fontSize: 6, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.18em', color: C.muted }}>
             Weekend
           </div>
-          <div style={{ fontSize: 29, fontWeight: 700, color: C.text, letterSpacing: '0.01em', textAlign: 'center' }}>
+          <div style={{ fontSize: 27, fontWeight: 700, color: C.text, letterSpacing: '0.01em', textAlign: 'center' }}>
             Do zobaczenia w poniedziałek
           </div>
           <div style={{ width: 40, height: 2, background: C.accent, borderRadius: 2, marginTop: 4 }} />
@@ -348,7 +348,7 @@ export default function PublicPage() {
           overflow: 'hidden',
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <div style={{ fontSize: 6, fontWeight: 600, color: '#515a6e', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 4, fontWeight: 600, color: '#515a6e', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {dayNameMap[currentDayId] ?? currentDayId}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -358,7 +358,7 @@ export default function PublicPage() {
                 animation: timerState.isDuty ? 'pulse-yellow 2s infinite' : 'pulse-green 2s infinite',
                 flexShrink: 0,
               }} />
-              <div style={{ fontWeight: 700, fontSize: 10, letterSpacing: '0.06em', textTransform: 'uppercase', color: C.text }}>
+              <div style={{ fontWeight: 700, fontSize: 8, letterSpacing: '0.06em', textTransform: 'uppercase', color: C.text }}>
                 {timerState.visible ? timerState.label : 'Dyżury'}
               </div>
             </div>
@@ -366,10 +366,10 @@ export default function PublicPage() {
 
           {timerState.visible && (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <div style={{ fontSize: 6, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.muted }}>
+              <div style={{ fontSize: 4, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.muted }}>
                 Pozostało
               </div>
-              <div style={{ fontFamily: C.mono, fontSize: 19, fontWeight: 600, color: C.accent, letterSpacing: '0.03em' }}>
+              <div style={{ fontFamily: C.mono, fontSize: 17, fontWeight: 600, color: C.accent, letterSpacing: '0.03em' }}>
                 {timerState.countdown}
               </div>
               <div style={{ height: 2, background: 'rgba(255,255,255,0.06)', borderRadius: 2, marginTop: 2, width: 90 }}>
@@ -400,8 +400,8 @@ export default function PublicPage() {
                 <th style={thStyle({ textAlign: 'center' })}>Czas</th>
                 {ZONES.map(zone => (
                   <th key={String(zone.key)} style={thStyle({ textAlign: 'center' })} title={zone.label}>
-                    <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: zone.color, marginRight: 3, verticalAlign: 'middle' }} />
-                    <span style={{ color: zone.color, verticalAlign: 'middle' }}>{zone.shortLabel}</span>
+                    <span style={{ display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: zone.color, marginRight: 2, verticalAlign: 'middle' }} />
+                    <span style={{ color: zone.color, verticalAlign: 'middle', fontSize: 9, fontWeight: 700 }}>{zone.shortLabel}</span>
                   </th>
                 ))}
               </tr>
@@ -423,7 +423,7 @@ export default function PublicPage() {
                           alignItems: 'center',
                           gap: 8,
                           padding: '0 8px',
-                          fontSize: 6,
+                          fontSize: 4,
                           letterSpacing: '0.05em',
                           textTransform: 'uppercase',
                           color: isCurrent ? 'rgba(0,201,160,0.7)' : 'rgba(255,255,255,0.12)',
@@ -447,14 +447,14 @@ export default function PublicPage() {
                 return (
                   <tr key={duty.id} style={{ borderBottom: `1px solid ${C.border}`, opacity: isPast ? 0.4 : 1 }}>
                     <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined }}>
-                      <div style={{ height: cellH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono, fontSize: isPast ? 5 : 6, color: C.muted }}>
+                      <div style={{ height: cellH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono, fontSize: isPast ? 4 : 4, color: C.muted }}>
                         {duty.nr}
                       </div>
                     </td>
                     <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined }}>
                       <div style={{ height: cellH, overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono }}>
-                        <div style={{ fontSize: isPast ? 6 : 8, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
-                        <div style={{ fontSize: isPast ? 5 : 6, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>
+                        <div style={{ fontSize: isPast ? 4 : 6, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
+                        <div style={{ fontSize: isPast ? 4 : 4, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>
                       </div>
                     </td>
                     {ZONES.map(zone => (
@@ -478,7 +478,7 @@ export default function PublicPage() {
 function thStyle(extra: React.CSSProperties): React.CSSProperties {
   return {
     padding: '0 5px',
-    fontSize: 6,
+    fontSize: 4,
     fontWeight: 700,
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
