@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 
 interface Duty {
   id: number;
@@ -258,17 +258,35 @@ export default function PublicPage() {
 
   const dotColor = timerState.isDuty ? '#eab308' : C.accent;
 
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const measure = () => {
+      const el = contentRef.current;
+      if (!el) return;
+      setScale(Math.min(1, window.innerHeight / el.scrollHeight));
+    };
+    requestAnimationFrame(measure);
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [filteredDuties, timerState.visible]);
+
   return (
-    <div style={{
-      background: C.bg,
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '10px 8px 80px',
-      fontFamily: C.sans,
-      color: C.text,
-    }}>
+    <div style={{ height: '100vh', overflow: 'hidden', background: C.bg }}>
+    <div
+      ref={contentRef}
+      style={{
+        background: C.bg,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '10px 8px 20px',
+        fontFamily: C.sans,
+        color: C.text,
+        transformOrigin: 'top center',
+        transform: `scale(${scale})`,
+      }}>
       <style>{`
         @keyframes pulse-green {
           0%   { box-shadow: 0 0 0 0 rgba(0,201,160,0.5); }
@@ -542,6 +560,7 @@ export default function PublicPage() {
         </table>
       </div>
       </>)}
+    </div>
     </div>
   );
 }
