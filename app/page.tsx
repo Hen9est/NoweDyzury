@@ -81,6 +81,8 @@ type CombinedRow =
   | { type: 'break'; duty: Duty };
 
 const LESSON_DAY_START = '8:00';
+const LESSON_ROW_H = 14;
+const TABLE_HEADER_H = 20;
 
 export default function PublicPage() {
   const [duties, setDuties] = useState<Duty[]>([]);
@@ -121,7 +123,6 @@ export default function PublicPage() {
     [duties, currentDayId]
   );
 
-  // Interleave lesson separator rows before each break row
   const combinedRows = useMemo<CombinedRow[]>(() => {
     const rows: CombinedRow[] = [];
     filteredDuties.forEach((duty, i) => {
@@ -221,7 +222,6 @@ export default function PublicPage() {
     return () => clearInterval(iv);
   }, [filteredDuties]);
 
-  // Index in combinedRows that is currently active (lesson or break)
   const currentCombinedIdx = useMemo(() => {
     if (!timerState.highlightedRowId) return -1;
     return combinedRows.findIndex(row => {
@@ -236,19 +236,17 @@ export default function PublicPage() {
   const formatName = (value: string, isActive: boolean, activeText: string, isPast: boolean) => {
     if (!value || value === '-' || value === '—') {
       return (
-        <span style={{ color: 'rgba(255,255,255,0.12)', display: 'block', textAlign: 'center', fontSize: isPast ? 7 : 10 }}>
-          —
-        </span>
+        <span style={{ color: 'rgba(255,255,255,0.12)', display: 'block', textAlign: 'center', fontSize: 9 }}>—</span>
       );
     }
     const parts = value.split(/[\/\n]/).map(p => p.trim()).filter(Boolean);
     return (
-      <div>
-        <div style={{ fontWeight: 600, color: isActive ? activeText : C.text, fontSize: isPast ? 7 : 10, lineHeight: 1.3 }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontWeight: 600, color: isActive ? activeText : C.text, fontSize: isPast ? 7 : 9, lineHeight: 1.2 }}>
           {parts[0]}
         </div>
         {parts[1] && (
-          <div style={{ fontSize: isPast ? 7 : 9, color: isActive ? 'rgba(255,255,255,0.5)' : C.muted, marginTop: 1, lineHeight: 1.3 }}>
+          <div style={{ fontSize: isPast ? 6 : 8, color: isActive ? 'rgba(255,255,255,0.5)' : C.muted, lineHeight: 1.2 }}>
             {parts[1]}
           </div>
         )}
@@ -262,8 +260,8 @@ export default function PublicPage() {
   const H = 450;
   const PAD = 6;
   const GAP = 6;
-  const LESSON_ROW_H = 14;
-  const TABLE_HEADER_H = 20;
+  const TOP_BAR_H = 34;
+  const BOTTOM_MARGIN = 20;
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [breakRowH, setBreakRowH] = useState(40);
@@ -294,7 +292,7 @@ export default function PublicPage() {
       display: 'flex',
       flexDirection: 'column',
       background: C.bg,
-      padding: PAD,
+      padding: `${PAD}px ${PAD}px ${BOTTOM_MARGIN}px`,
       boxSizing: 'border-box',
       gap: GAP,
       fontFamily: C.sans,
@@ -327,239 +325,154 @@ export default function PublicPage() {
           gap: 10,
           boxSizing: 'border-box',
         }}>
-          <div style={{
-            fontFamily: C.mono,
-            fontSize: 11,
-            fontWeight: 500,
-            textTransform: 'uppercase',
-            letterSpacing: '0.18em',
-            color: C.muted,
-          }}>
+          <div style={{ fontFamily: C.mono, fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.18em', color: C.muted }}>
             Weekend
           </div>
-          <div style={{
-            fontSize: 32,
-            fontWeight: 700,
-            color: C.text,
-            letterSpacing: '0.01em',
-            textAlign: 'center',
-          }}>
+          <div style={{ fontSize: 32, fontWeight: 700, color: C.text, letterSpacing: '0.01em', textAlign: 'center' }}>
             Do zobaczenia w poniedziałek
           </div>
-          <div style={{
-            width: 40, height: 2,
-            background: C.accent,
-            borderRadius: 2,
-            marginTop: 4,
-          }} />
+          <div style={{ width: 40, height: 2, background: C.accent, borderRadius: 2, marginTop: 4 }} />
         </div>
       )}
 
-      {/* Top Bar */}
       {!isWeekend && (<>
-      <div style={{
-        flexShrink: 0,
-        height: TOP_BAR_H,
-        background: C.surface,
-        border: `1px solid ${C.border}`,
-        borderRadius: 8,
-        padding: '0 14px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 16,
-        boxSizing: 'border-box',
-        overflow: 'hidden',
-      }}>
-        {/* Left: day name stacked above status label */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <div style={{
-            fontSize: 11, fontWeight: 600,
-            color: '#515a6e',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-          }}>
-            {dayNameMap[currentDayId] ?? currentDayId}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 9, height: 9, borderRadius: '50%',
-              background: dotColor,
-              animation: timerState.isDuty ? 'pulse-yellow 2s infinite' : 'pulse-green 2s infinite',
-              flexShrink: 0,
-            }} />
-            <div style={{
-              fontWeight: 700, fontSize: 15,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: C.text,
-            }}>
-              {timerState.visible ? timerState.label : 'Dyżury'}
+        {/* Top Bar */}
+        <div style={{
+          flexShrink: 0,
+          height: TOP_BAR_H,
+          background: C.surface,
+          border: `1px solid ${C.border}`,
+          borderRadius: 8,
+          padding: '0 14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 16,
+          boxSizing: 'border-box',
+          overflow: 'hidden',
+        }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <div style={{ fontSize: 9, fontWeight: 600, color: '#515a6e', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              {dayNameMap[currentDayId] ?? currentDayId}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{
+                width: 8, height: 8, borderRadius: '50%',
+                background: dotColor,
+                animation: timerState.isDuty ? 'pulse-yellow 2s infinite' : 'pulse-green 2s infinite',
+                flexShrink: 0,
+              }} />
+              <div style={{ fontWeight: 700, fontSize: 13, letterSpacing: '0.06em', textTransform: 'uppercase', color: C.text }}>
+                {timerState.visible ? timerState.label : 'Dyżury'}
+              </div>
             </div>
           </div>
+
+          {timerState.visible && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.muted }}>
+                Pozostało
+              </div>
+              <div style={{ fontFamily: C.mono, fontSize: 22, fontWeight: 600, color: C.accent, letterSpacing: '0.03em' }}>
+                {timerState.countdown}
+              </div>
+              <div style={{ height: 2, background: 'rgba(255,255,255,0.06)', borderRadius: 2, marginTop: 2, width: 90 }}>
+                <div style={{ height: '100%', borderRadius: 2, background: C.accent, transition: 'width 1s linear', width: `${timerState.progress}%` }} />
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Right: countdown timer */}
-        {timerState.visible && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.muted, marginBottom: 1 }}>
-              Pozostało
-            </div>
-            <div style={{
-              fontFamily: C.mono,
-              fontSize: 26, fontWeight: 600,
-              color: C.accent,
-              letterSpacing: '0.03em',
-            }}>
-              {timerState.countdown}
-            </div>
-            <div style={{ height: 2, background: 'rgba(255,255,255,0.06)', borderRadius: 2, marginTop: 4, width: 110 }}>
-              <div style={{
-                height: '100%', borderRadius: 2,
-                background: C.accent,
-                transition: 'width 1s linear',
-                width: `${timerState.progress}%`,
-              }} />
-            </div>
-          </div>
-        )}
-      </div>
+        {/* Table */}
+        <div ref={tableContainerRef} style={{
+          flex: 1,
+          background: C.surface,
+          border: `1px solid ${C.border}`,
+          borderRadius: 10,
+          overflow: 'hidden',
+          boxSizing: 'border-box',
+        }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+            <colgroup>
+              <col style={{ width: 26 }} />
+              <col style={{ width: 58 }} />
+              {ZONES.map(z => <col key={String(z.key)} />)}
+            </colgroup>
+            <thead>
+              <tr style={{ background: C.headerBg, borderBottom: `1px solid ${C.border}`, height: TABLE_HEADER_H }}>
+                <th style={thStyle({ textAlign: 'center' })}>#</th>
+                <th style={thStyle({ textAlign: 'center' })}>Czas</th>
+                {ZONES.map(zone => (
+                  <th key={String(zone.key)} style={thStyle({ textAlign: 'center' })} title={zone.label}>
+                    <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: zone.color, marginRight: 3, verticalAlign: 'middle' }} />
+                    <span style={{ color: zone.color, verticalAlign: 'middle' }}>{zone.shortLabel}</span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {combinedRows.map((row, idx) => {
+                const isPast = currentCombinedIdx > 0 && idx < currentCombinedIdx;
 
-      {/* Table */}
-      <div ref={tableContainerRef} style={{
-        flex: 1,
-        background: C.surface,
-        border: `1px solid ${C.border}`,
-        borderRadius: 10,
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-      }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
-          <colgroup>
-            <col style={{ width: 26 }} />
-            <col style={{ width: 58 }} />
-            {ZONES.map(z => <col key={String(z.key)} />)}
-          </colgroup>
-          <thead>
-            <tr style={{ background: C.headerBg, borderBottom: `1px solid ${C.border}`, height: TABLE_HEADER_H }}>
-              <th style={thStyle({ textAlign: 'center' })}>#</th>
-              <th style={thStyle({ textAlign: 'center' })}>Czas</th>
-              {ZONES.map(zone => (
-                <th key={String(zone.key)} style={thStyle({ textAlign: 'center' })} title={zone.label}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: 6, height: 6,
-                    borderRadius: '50%',
-                    background: zone.color,
-                    marginRight: 3,
-                    verticalAlign: 'middle',
-                  }} />
-                  <span style={{ color: zone.color, verticalAlign: 'middle' }}>{zone.shortLabel}</span>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {combinedRows.map((row, idx) => {
-              const isPast = currentCombinedIdx > 0 && idx < currentCombinedIdx;
+                // ── LESSON ROW ──
+                if (row.type === 'lesson') {
+                  const isCurrent = !timerState.isDuty && timerState.highlightedRowId === row.breakId;
+                  return (
+                    <tr key={`lesson-${row.breakId}`} style={{ opacity: isPast ? 0.35 : 1 }}>
+                      <td colSpan={12} style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.03)' : 'transparent', borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
+                        <div style={{
+                          height: LESSON_ROW_H,
+                          overflow: 'hidden',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          padding: '0 8px',
+                          fontSize: 8,
+                          letterSpacing: '0.05em',
+                          textTransform: 'uppercase',
+                          color: isCurrent ? 'rgba(0,201,160,0.7)' : 'rgba(255,255,255,0.12)',
+                          fontFamily: C.mono,
+                        }}>
+                          <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(0,201,160,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
+                          Lekcja {row.nr}&nbsp;{row.start}–{row.end}{isCurrent ? ' trwa' : ''}
+                          <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(0,201,160,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                }
 
-              // ── LESSON ROW (thin separator) ──
-              if (row.type === 'lesson') {
-                const isCurrent = !timerState.isDuty && timerState.highlightedRowId === row.breakId;
+                // ── BREAK ROW ──
+                const { duty } = row;
+                const isCurrent = duty.id === timerState.highlightedRowId && timerState.isDuty;
+                const [start, end] = (duty.time || '').split('-');
+
                 return (
-                  <tr key={`lesson-${row.breakId}`} style={{ opacity: isPast ? 0.35 : 1, height: LESSON_ROW_H }}>
-                    <td
-                      colSpan={12}
-                      style={{
-                        padding: 0,
-                        borderBottom: `1px solid rgba(255,255,255,0.04)`,
-                        background: isCurrent ? 'rgba(0,201,160,0.03)' : 'transparent',
-                      }}
-                    >
-                      <div style={{
-                        display: 'flex', alignItems: 'center', gap: 8,
-                        padding: isPast ? '2px 8px' : isCurrent ? '5px 8px' : '3px 8px',
-                        fontSize: isPast ? 7 : 9,
-                        letterSpacing: '0.05em',
-                        textTransform: 'uppercase',
-                        color: isCurrent ? 'rgba(0,201,160,0.7)' : 'rgba(255,255,255,0.1)',
-                        fontFamily: C.mono,
-                      }}>
-                        <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(0,201,160,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
-                        Lekcja {row.nr}&nbsp;&nbsp;{row.start}–{row.end}{isCurrent ? '  trwa' : ''}
-                        <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(0,201,160,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
+                  <tr key={duty.id} style={{ borderBottom: `1px solid ${C.border}`, opacity: isPast ? 0.35 : 1 }}>
+                    <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined }}>
+                      <div style={{ height: breakRowH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono, fontSize: 9, color: C.muted }}>
+                        {duty.nr}
                       </div>
                     </td>
+                    <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined }}>
+                      <div style={{ height: breakRowH, overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono }}>
+                        <div style={{ fontSize: 11, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
+                        <div style={{ fontSize: 9, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>
+                      </div>
+                    </td>
+                    {ZONES.map(zone => (
+                      <td key={String(zone.key)} style={{ padding: 0, overflow: 'hidden', ...(isCurrent ? { background: zone.activeBg, borderTop: `2px solid ${zone.activeBorder}` } : {}) }}>
+                        <div style={{ height: breakRowH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px', boxSizing: 'border-box' }}>
+                          {formatName(String(duty[zone.key] || ''), isCurrent, zone.activeText, isPast)}
+                        </div>
+                      </td>
+                    ))}
                   </tr>
                 );
-              }
-
-              // ── BREAK ROW (full duty) ──
-              const { duty } = row;
-              const isCurrent = duty.id === timerState.highlightedRowId && timerState.isDuty;
-              const [start, end] = (duty.time || '').split('-');
-
-              return (
-                <tr
-                  key={duty.id}
-                  style={{
-                    borderBottom: `1px solid ${C.border}`,
-                    opacity: isPast ? 0.35 : 1,
-                    height: breakRowH,
-                  }}
-                >
-                  {/* # */}
-                  <td style={{
-                    padding: '2px 4px',
-                    textAlign: 'center',
-                    fontFamily: C.mono,
-                    fontSize: 9,
-                    color: C.muted,
-                    verticalAlign: 'middle',
-                    overflow: 'hidden',
-                    background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined,
-                  }}>
-                    {duty.nr}
-                  </td>
-
-                  {/* Czas */}
-                  <td style={{
-                    padding: '2px 4px',
-                    textAlign: 'center',
-                    fontFamily: C.mono,
-                    verticalAlign: 'middle',
-                    overflow: 'hidden',
-                    background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined,
-                  }}>
-                    <div style={{ fontSize: 11, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
-                    <div style={{ fontSize: 9, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>
-                  </td>
-
-                  {/* Zone cells */}
-                  {ZONES.map(zone => (
-                    <td
-                      key={String(zone.key)}
-                      style={{
-                        padding: '2px 4px',
-                        verticalAlign: 'middle',
-                        lineHeight: 1.2,
-                        textAlign: 'center',
-                        overflow: 'hidden',
-                        ...(isCurrent ? {
-                          background: zone.activeBg,
-                          borderTop: `2px solid ${zone.activeBorder}`,
-                        } : {}),
-                      }}
-                    >
-                      {formatName(String(duty[zone.key] || ''), isCurrent, zone.activeText, isPast)}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+              })}
+            </tbody>
+          </table>
+        </div>
       </>)}
     </div>
   );
@@ -567,7 +480,7 @@ export default function PublicPage() {
 
 function thStyle(extra: React.CSSProperties): React.CSSProperties {
   return {
-    padding: '7px 5px',
+    padding: '0 5px',
     fontSize: 9,
     fontWeight: 700,
     textTransform: 'uppercase',
