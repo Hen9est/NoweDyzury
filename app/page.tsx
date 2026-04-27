@@ -236,11 +236,11 @@ export default function PublicPage() {
   const formatName = (value: string, isActive: boolean, activeText: string, isPast: boolean) => {
     if (!value || value === '-' || value === '—') {
       return (
-        <span style={{ color: 'rgba(255,255,255,0.12)', display: 'block', textAlign: 'center', fontSize: 9 }}>—</span>
+        <span style={{ color: 'rgba(255,255,255,0.12)', display: 'block', textAlign: 'center', fontSize: 8 }}>—</span>
       );
     }
     const parts = value.split(/[\/\n]/).map(p => p.trim()).filter(Boolean);
-    const fontSize = isPast ? 7 : 9;
+    const fontSize = isPast ? 6 : 8;
     const color = isActive ? activeText : C.text;
     return (
       <div style={{ textAlign: 'center' }}>
@@ -256,14 +256,13 @@ export default function PublicPage() {
   const dotColor = timerState.isDuty ? '#eab308' : C.accent;
 
   const W = 640;
-  const H = 450;
+  const H = 500;
   const PAD = 6;
+  const PAD_BOTTOM = 80;
   const GAP = 6;
   const TOP_BAR_H = 34;
-  const BOTTOM_MARGIN = 20;
-  // available tbody height based on known fixed layout:
-  // H - BOTTOM_MARGIN - PAD*2 - GAP - TOP_BAR_H - TABLE_HEADER_H - 2px borders
-  const TBODY_AVAIL = H - BOTTOM_MARGIN - PAD * 2 - GAP - TOP_BAR_H - TABLE_HEADER_H - 2;
+  // H - PAD_top - PAD_bottom - GAP - TOP_BAR_H - TABLE_HEADER_H - 2px borders
+  const TBODY_AVAIL = H - PAD - PAD_BOTTOM - GAP - TOP_BAR_H - TABLE_HEADER_H - 2;
 
   const nPastBreaks = useMemo(() => {
     if (currentCombinedIdx <= 0) return 0;
@@ -284,12 +283,12 @@ export default function PublicPage() {
   return (
     <div style={{
       width: W,
-      height: H - BOTTOM_MARGIN,
+      height: H,
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
       background: C.bg,
-      padding: `${PAD}px ${PAD}px ${PAD}px`,
+      padding: `${PAD}px ${PAD}px ${PAD_BOTTOM}px`,
       boxSizing: 'border-box',
       gap: GAP,
       fontFamily: C.sans,
@@ -322,10 +321,10 @@ export default function PublicPage() {
           gap: 10,
           boxSizing: 'border-box',
         }}>
-          <div style={{ fontFamily: C.mono, fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.18em', color: C.muted }}>
+          <div style={{ fontFamily: C.mono, fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.18em', color: C.muted }}>
             Weekend
           </div>
-          <div style={{ fontSize: 32, fontWeight: 700, color: C.text, letterSpacing: '0.01em', textAlign: 'center' }}>
+          <div style={{ fontSize: 31, fontWeight: 700, color: C.text, letterSpacing: '0.01em', textAlign: 'center' }}>
             Do zobaczenia w poniedziałek
           </div>
           <div style={{ width: 40, height: 2, background: C.accent, borderRadius: 2, marginTop: 4 }} />
@@ -349,7 +348,7 @@ export default function PublicPage() {
           overflow: 'hidden',
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <div style={{ fontSize: 9, fontWeight: 600, color: '#515a6e', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 8, fontWeight: 600, color: '#515a6e', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {dayNameMap[currentDayId] ?? currentDayId}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -359,7 +358,7 @@ export default function PublicPage() {
                 animation: timerState.isDuty ? 'pulse-yellow 2s infinite' : 'pulse-green 2s infinite',
                 flexShrink: 0,
               }} />
-              <div style={{ fontWeight: 700, fontSize: 13, letterSpacing: '0.06em', textTransform: 'uppercase', color: C.text }}>
+              <div style={{ fontWeight: 700, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', color: C.text }}>
                 {timerState.visible ? timerState.label : 'Dyżury'}
               </div>
             </div>
@@ -367,10 +366,10 @@ export default function PublicPage() {
 
           {timerState.visible && (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.muted }}>
+              <div style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.muted }}>
                 Pozostało
               </div>
-              <div style={{ fontFamily: C.mono, fontSize: 22, fontWeight: 600, color: C.accent, letterSpacing: '0.03em' }}>
+              <div style={{ fontFamily: C.mono, fontSize: 21, fontWeight: 600, color: C.accent, letterSpacing: '0.03em' }}>
                 {timerState.countdown}
               </div>
               <div style={{ height: 2, background: 'rgba(255,255,255,0.06)', borderRadius: 2, marginTop: 2, width: 90 }}>
@@ -424,7 +423,7 @@ export default function PublicPage() {
                           alignItems: 'center',
                           gap: 8,
                           padding: '0 8px',
-                          fontSize: 8,
+                          fontSize: 7,
                           letterSpacing: '0.05em',
                           textTransform: 'uppercase',
                           color: isCurrent ? 'rgba(0,201,160,0.7)' : 'rgba(255,255,255,0.12)',
@@ -448,14 +447,14 @@ export default function PublicPage() {
                 return (
                   <tr key={duty.id} style={{ borderBottom: `1px solid ${C.border}`, opacity: isPast ? 0.4 : 1 }}>
                     <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined }}>
-                      <div style={{ height: cellH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono, fontSize: isPast ? 7 : 9, color: C.muted }}>
+                      <div style={{ height: cellH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono, fontSize: isPast ? 6 : 8, color: C.muted }}>
                         {duty.nr}
                       </div>
                     </td>
                     <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined }}>
                       <div style={{ height: cellH, overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono }}>
-                        <div style={{ fontSize: isPast ? 8 : 11, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
-                        <div style={{ fontSize: isPast ? 7 : 9, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>
+                        <div style={{ fontSize: isPast ? 7 : 10, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
+                        <div style={{ fontSize: isPast ? 6 : 8, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>
                       </div>
                     </td>
                     {ZONES.map(zone => (
@@ -479,7 +478,7 @@ export default function PublicPage() {
 function thStyle(extra: React.CSSProperties): React.CSSProperties {
   return {
     padding: '0 5px',
-    fontSize: 9,
+    fontSize: 8,
     fontWeight: 700,
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
