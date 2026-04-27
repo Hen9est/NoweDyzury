@@ -269,19 +269,21 @@ export default function PublicPage() {
   const [breakRowH, setBreakRowH] = useState(40);
 
   useEffect(() => {
+    const el = tableContainerRef.current;
+    if (!el) return;
     const compute = () => {
-      if (!tableContainerRef.current) return;
-      const containerH = tableContainerRef.current.clientHeight;
+      const containerH = el.clientHeight;
       const nBreaks = filteredDuties.length;
       const nLessons = combinedRows.filter(r => r.type === 'lesson').length;
       if (nBreaks === 0) return;
       const available = containerH - TABLE_HEADER_H - 2;
-      const bh = Math.max(22, Math.floor((available - nLessons * LESSON_ROW_H) / nBreaks));
+      const bh = Math.max(20, Math.floor((available - nLessons * LESSON_ROW_H) / nBreaks));
       setBreakRowH(bh);
     };
-    requestAnimationFrame(() => requestAnimationFrame(compute));
-    window.addEventListener('resize', compute);
-    return () => window.removeEventListener('resize', compute);
+    const ro = new ResizeObserver(compute);
+    ro.observe(el);
+    compute();
+    return () => ro.disconnect();
   }, [filteredDuties.length, combinedRows.length]);
 
   return (
@@ -508,12 +510,13 @@ export default function PublicPage() {
                 >
                   {/* # */}
                   <td style={{
-                    padding: isPast ? '3px 4px' : '7px 4px',
+                    padding: '2px 4px',
                     textAlign: 'center',
                     fontFamily: C.mono,
-                    fontSize: isPast ? 7 : 9,
+                    fontSize: 9,
                     color: C.muted,
                     verticalAlign: 'middle',
+                    overflow: 'hidden',
                     background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined,
                   }}>
                     {duty.nr}
@@ -521,30 +524,15 @@ export default function PublicPage() {
 
                   {/* Czas */}
                   <td style={{
-                    padding: isPast ? '3px 4px' : '7px 4px',
+                    padding: '2px 4px',
                     textAlign: 'center',
                     fontFamily: C.mono,
                     verticalAlign: 'middle',
+                    overflow: 'hidden',
                     background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined,
                   }}>
-                    <div style={{ fontSize: isPast ? 7 : 11, color: C.text, fontWeight: 600 }}>{start}</div>
-                    <div style={{ fontSize: isPast ? 7 : 9, color: C.muted }}>{end}</div>
-                    {isCurrent && (
-                      <div style={{
-                        display: 'inline-block',
-                        background: C.accent,
-                        color: '#0d0f14',
-                        fontSize: 9,
-                        fontWeight: 800,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.08em',
-                        padding: '1px 6px',
-                        borderRadius: 100,
-                        marginTop: 3,
-                      }}>
-                        teraz
-                      </div>
-                    )}
+                    <div style={{ fontSize: 11, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
+                    <div style={{ fontSize: 9, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>
                   </td>
 
                   {/* Zone cells */}
@@ -552,10 +540,11 @@ export default function PublicPage() {
                     <td
                       key={String(zone.key)}
                       style={{
-                        padding: isPast ? '3px 5px' : '7px 5px',
+                        padding: '2px 4px',
                         verticalAlign: 'middle',
-                        lineHeight: 1.3,
+                        lineHeight: 1.2,
                         textAlign: 'center',
+                        overflow: 'hidden',
                         ...(isCurrent ? {
                           background: zone.activeBg,
                           borderTop: `2px solid ${zone.activeBorder}`,
