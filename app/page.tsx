@@ -240,16 +240,15 @@ export default function PublicPage() {
       );
     }
     const parts = value.split(/[\/\n]/).map(p => p.trim()).filter(Boolean);
+    const fontSize = isPast ? 7 : 9;
+    const color = isActive ? activeText : C.text;
     return (
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontWeight: 600, color: isActive ? activeText : C.text, fontSize: isPast ? 7 : 9, lineHeight: 1.2 }}>
-          {parts[0]}
-        </div>
-        {parts[1] && (
-          <div style={{ fontSize: isPast ? 6 : 8, color: isActive ? 'rgba(255,255,255,0.5)' : C.muted, lineHeight: 1.2 }}>
-            {parts[1]}
+        {parts.map((part, i) => (
+          <div key={i} style={{ fontWeight: 600, color, fontSize, lineHeight: 1.2 }}>
+            {part}
           </div>
-        )}
+        ))}
       </div>
     );
   };
@@ -266,6 +265,13 @@ export default function PublicPage() {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const [breakRowH, setBreakRowH] = useState(40);
 
+  const nPastBreaks = useMemo(() => {
+    if (currentCombinedIdx <= 0) return 0;
+    return combinedRows.slice(0, currentCombinedIdx).filter(r => r.type === 'break').length;
+  }, [currentCombinedIdx, combinedRows]);
+
+  const pastBreakRowH = Math.max(16, Math.floor(breakRowH * 0.55));
+
   useEffect(() => {
     const el = tableContainerRef.current;
     if (!el) return;
@@ -275,7 +281,9 @@ export default function PublicPage() {
       const nLessons = combinedRows.filter(r => r.type === 'lesson').length;
       if (nBreaks === 0) return;
       const available = containerH - TABLE_HEADER_H - 2;
-      const bh = Math.max(20, Math.floor((available - nLessons * LESSON_ROW_H) / nBreaks));
+      const nFuture = nBreaks - nPastBreaks;
+      const totalUnits = nFuture + nPastBreaks * 0.55;
+      const bh = Math.max(20, Math.floor((available - nLessons * LESSON_ROW_H) / totalUnits));
       setBreakRowH(bh);
     };
     const ro = new ResizeObserver(compute);
@@ -287,12 +295,12 @@ export default function PublicPage() {
   return (
     <div style={{
       width: W,
-      height: H,
+      height: H - BOTTOM_MARGIN,
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
       background: C.bg,
-      padding: `${PAD}px ${PAD}px ${BOTTOM_MARGIN}px`,
+      padding: `${PAD}px ${PAD}px ${PAD}px`,
       boxSizing: 'border-box',
       gap: GAP,
       fontFamily: C.sans,
@@ -446,23 +454,24 @@ export default function PublicPage() {
                 const { duty } = row;
                 const isCurrent = duty.id === timerState.highlightedRowId && timerState.isDuty;
                 const [start, end] = (duty.time || '').split('-');
+                const cellH = isPast ? pastBreakRowH : breakRowH;
 
                 return (
-                  <tr key={duty.id} style={{ borderBottom: `1px solid ${C.border}`, opacity: isPast ? 0.35 : 1 }}>
+                  <tr key={duty.id} style={{ borderBottom: `1px solid ${C.border}`, opacity: isPast ? 0.4 : 1 }}>
                     <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined }}>
-                      <div style={{ height: breakRowH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono, fontSize: 9, color: C.muted }}>
+                      <div style={{ height: cellH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono, fontSize: isPast ? 7 : 9, color: C.muted }}>
                         {duty.nr}
                       </div>
                     </td>
                     <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined }}>
-                      <div style={{ height: breakRowH, overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono }}>
-                        <div style={{ fontSize: 11, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
-                        <div style={{ fontSize: 9, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>
+                      <div style={{ height: cellH, overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono }}>
+                        <div style={{ fontSize: isPast ? 8 : 11, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
+                        <div style={{ fontSize: isPast ? 7 : 9, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>
                       </div>
                     </td>
                     {ZONES.map(zone => (
                       <td key={String(zone.key)} style={{ padding: 0, overflow: 'hidden', ...(isCurrent ? { background: zone.activeBg, borderTop: `2px solid ${zone.activeBorder}` } : {}) }}>
-                        <div style={{ height: breakRowH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px', boxSizing: 'border-box' }}>
+                        <div style={{ height: cellH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px', boxSizing: 'border-box' }}>
                           {formatName(String(duty[zone.key] || ''), isCurrent, zone.activeText, isPast)}
                         </div>
                       </td>
