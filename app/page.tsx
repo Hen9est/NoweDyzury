@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 interface Duty {
   id: number;
@@ -258,35 +258,20 @@ export default function PublicPage() {
 
   const dotColor = timerState.isDuty ? '#eab308' : C.accent;
 
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    const measure = () => {
-      const el = contentRef.current;
-      if (!el) return;
-      setScale(Math.min(1, window.innerHeight / el.scrollHeight));
-    };
-    requestAnimationFrame(measure);
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, [filteredDuties, timerState.visible]);
-
   return (
-    <div style={{ height: '100vh', overflow: 'hidden', background: C.bg }}>
-    <div
-      ref={contentRef}
-      style={{
-        background: C.bg,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '10px 8px 20px',
-        fontFamily: C.sans,
-        color: C.text,
-        transformOrigin: 'top center',
-        transform: `scale(${scale})`,
-      }}>
+    <div style={{
+      height: '100vh',
+      width: '100%',
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+      background: C.bg,
+      padding: '8px',
+      boxSizing: 'border-box',
+      gap: 8,
+      fontFamily: C.sans,
+      color: C.text,
+    }}>
       <style>{`
         @keyframes pulse-green {
           0%   { box-shadow: 0 0 0 0 rgba(0,201,160,0.5); }
@@ -303,16 +288,15 @@ export default function PublicPage() {
       {/* Weekend screen */}
       {isWeekend && (
         <div style={{
-          width: '100%', maxWidth: '100%',
+          flex: 1,
           background: C.surface,
           border: `1px solid ${C.border}`,
-          borderRadius: 12,
+          borderRadius: 10,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           gap: 10,
-          padding: '80px 24px',
           boxSizing: 'border-box',
         }}>
           <div style={{
@@ -346,15 +330,14 @@ export default function PublicPage() {
       {/* Top Bar */}
       {!isWeekend && (<>
       <div style={{
-        width: '100%', maxWidth: '100%',
+        flexShrink: 0,
         background: C.surface,
         border: `1px solid ${C.border}`,
         borderRadius: 10,
-        padding: '10px 18px',
+        padding: '8px 14px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 10,
         gap: 16,
         boxSizing: 'border-box',
       }}>
@@ -414,7 +397,7 @@ export default function PublicPage() {
 
       {/* Table */}
       <div style={{
-        width: '100%', maxWidth: '100%',
+        flex: 1,
         background: C.surface,
         border: `1px solid ${C.border}`,
         borderRadius: 10,
@@ -560,7 +543,6 @@ export default function PublicPage() {
         </table>
       </div>
       </>)}
-    </div>
     </div>
   );
 }
