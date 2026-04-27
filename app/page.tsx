@@ -258,17 +258,35 @@ export default function PublicPage() {
 
   const dotColor = timerState.isDuty ? '#eab308' : C.accent;
 
+  // Exact viewport dimensions
+  const W = 640;
+  const H = 450;
+  const PAD = 6;   // outer padding top/bottom/left/right
+  const GAP = 6;   // gap between top bar and table
+  const TOP_BAR_H = 34;
+  const TABLE_HEADER_H = 20;
+  const LESSON_ROW_H = 14;
+
+  const tbodyAvail = H - PAD * 2 - GAP - TOP_BAR_H - TABLE_HEADER_H - 2;
+
+  const breakRowH = useMemo(() => {
+    const nBreaks = filteredDuties.length;
+    const nLessons = combinedRows.filter(r => r.type === 'lesson').length;
+    if (nBreaks === 0) return 40;
+    return Math.max(22, Math.floor((tbodyAvail - nLessons * LESSON_ROW_H) / nBreaks));
+  }, [filteredDuties.length, combinedRows.length, tbodyAvail]);
+
   return (
     <div style={{
-      height: '100vh',
-      width: '100%',
+      width: W,
+      height: H,
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
       background: C.bg,
-      padding: '8px',
+      padding: PAD,
       boxSizing: 'border-box',
-      gap: 8,
+      gap: GAP,
       fontFamily: C.sans,
       color: C.text,
     }}>
@@ -331,15 +349,17 @@ export default function PublicPage() {
       {!isWeekend && (<>
       <div style={{
         flexShrink: 0,
+        height: TOP_BAR_H,
         background: C.surface,
         border: `1px solid ${C.border}`,
-        borderRadius: 10,
-        padding: '8px 14px',
+        borderRadius: 8,
+        padding: '0 14px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 16,
         boxSizing: 'border-box',
+        overflow: 'hidden',
       }}>
         {/* Left: day name stacked above status label */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -411,7 +431,7 @@ export default function PublicPage() {
             {ZONES.map(z => <col key={String(z.key)} />)}
           </colgroup>
           <thead>
-            <tr style={{ background: C.headerBg, borderBottom: `1px solid ${C.border}` }}>
+            <tr style={{ background: C.headerBg, borderBottom: `1px solid ${C.border}`, height: TABLE_HEADER_H }}>
               <th style={thStyle({ textAlign: 'center' })}>#</th>
               <th style={thStyle({ textAlign: 'center' })}>Czas</th>
               {ZONES.map(zone => (
@@ -437,7 +457,7 @@ export default function PublicPage() {
               if (row.type === 'lesson') {
                 const isCurrent = !timerState.isDuty && timerState.highlightedRowId === row.breakId;
                 return (
-                  <tr key={`lesson-${row.breakId}`} style={{ opacity: isPast ? 0.35 : 1 }}>
+                  <tr key={`lesson-${row.breakId}`} style={{ opacity: isPast ? 0.35 : 1, height: LESSON_ROW_H }}>
                     <td
                       colSpan={12}
                       style={{
@@ -475,6 +495,7 @@ export default function PublicPage() {
                   style={{
                     borderBottom: `1px solid ${C.border}`,
                     opacity: isPast ? 0.35 : 1,
+                    height: breakRowH,
                   }}
                 >
                   {/* # */}
