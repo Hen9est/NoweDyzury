@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 
 interface Duty {
   id: number;
@@ -258,23 +258,31 @@ export default function PublicPage() {
 
   const dotColor = timerState.isDuty ? '#eab308' : C.accent;
 
-  // Exact viewport dimensions
   const W = 640;
   const H = 450;
-  const PAD = 6;   // outer padding top/bottom/left/right
-  const GAP = 6;   // gap between top bar and table
-  const TOP_BAR_H = 34;
-  const TABLE_HEADER_H = 20;
+  const PAD = 6;
+  const GAP = 6;
   const LESSON_ROW_H = 14;
+  const TABLE_HEADER_H = 20;
 
-  const tbodyAvail = H - PAD * 2 - GAP - TOP_BAR_H - TABLE_HEADER_H - 2;
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [breakRowH, setBreakRowH] = useState(40);
 
-  const breakRowH = useMemo(() => {
-    const nBreaks = filteredDuties.length;
-    const nLessons = combinedRows.filter(r => r.type === 'lesson').length;
-    if (nBreaks === 0) return 40;
-    return Math.max(22, Math.floor((tbodyAvail - nLessons * LESSON_ROW_H) / nBreaks));
-  }, [filteredDuties.length, combinedRows.length, tbodyAvail]);
+  useEffect(() => {
+    const compute = () => {
+      if (!tableContainerRef.current) return;
+      const containerH = tableContainerRef.current.clientHeight;
+      const nBreaks = filteredDuties.length;
+      const nLessons = combinedRows.filter(r => r.type === 'lesson').length;
+      if (nBreaks === 0) return;
+      const available = containerH - TABLE_HEADER_H - 2;
+      const bh = Math.max(22, Math.floor((available - nLessons * LESSON_ROW_H) / nBreaks));
+      setBreakRowH(bh);
+    };
+    requestAnimationFrame(() => requestAnimationFrame(compute));
+    window.addEventListener('resize', compute);
+    return () => window.removeEventListener('resize', compute);
+  }, [filteredDuties.length, combinedRows.length]);
 
   return (
     <div style={{
@@ -416,7 +424,7 @@ export default function PublicPage() {
       </div>
 
       {/* Table */}
-      <div style={{
+      <div ref={tableContainerRef} style={{
         flex: 1,
         background: C.surface,
         border: `1px solid ${C.border}`,
