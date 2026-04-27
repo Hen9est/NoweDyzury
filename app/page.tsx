@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 interface Duty {
   id: number;
@@ -261,36 +261,25 @@ export default function PublicPage() {
   const GAP = 6;
   const TOP_BAR_H = 34;
   const BOTTOM_MARGIN = 20;
-
-  const tableContainerRef = useRef<HTMLDivElement>(null);
-  const [breakRowH, setBreakRowH] = useState(40);
+  // available tbody height based on known fixed layout:
+  // H - BOTTOM_MARGIN - PAD*2 - GAP - TOP_BAR_H - TABLE_HEADER_H - 2px borders
+  const TBODY_AVAIL = H - BOTTOM_MARGIN - PAD * 2 - GAP - TOP_BAR_H - TABLE_HEADER_H - 2;
 
   const nPastBreaks = useMemo(() => {
     if (currentCombinedIdx <= 0) return 0;
     return combinedRows.slice(0, currentCombinedIdx).filter(r => r.type === 'break').length;
   }, [currentCombinedIdx, combinedRows]);
 
-  const pastBreakRowH = Math.max(16, Math.floor(breakRowH * 0.55));
+  const breakRowH = useMemo(() => {
+    const nBreaks = filteredDuties.length;
+    const nLessons = combinedRows.filter(r => r.type === 'lesson').length;
+    if (nBreaks === 0) return 40;
+    const nFuture = nBreaks - nPastBreaks;
+    const totalUnits = nFuture + nPastBreaks * 0.55;
+    return Math.max(20, Math.floor((TBODY_AVAIL - nLessons * LESSON_ROW_H) / Math.max(1, totalUnits)));
+  }, [filteredDuties.length, combinedRows.length, nPastBreaks, TBODY_AVAIL]);
 
-  useEffect(() => {
-    const el = tableContainerRef.current;
-    if (!el) return;
-    const compute = () => {
-      const containerH = el.clientHeight;
-      const nBreaks = filteredDuties.length;
-      const nLessons = combinedRows.filter(r => r.type === 'lesson').length;
-      if (nBreaks === 0) return;
-      const available = containerH - TABLE_HEADER_H - 2;
-      const nFuture = nBreaks - nPastBreaks;
-      const totalUnits = nFuture + nPastBreaks * 0.55;
-      const bh = Math.max(20, Math.floor((available - nLessons * LESSON_ROW_H) / totalUnits));
-      setBreakRowH(bh);
-    };
-    const ro = new ResizeObserver(compute);
-    ro.observe(el);
-    compute();
-    return () => ro.disconnect();
-  }, [filteredDuties.length, combinedRows.length]);
+  const pastBreakRowH = Math.max(16, Math.floor(breakRowH * 0.55));
 
   return (
     <div style={{
@@ -392,7 +381,7 @@ export default function PublicPage() {
         </div>
 
         {/* Table */}
-        <div ref={tableContainerRef} style={{
+        <div style={{
           flex: 1,
           background: C.surface,
           border: `1px solid ${C.border}`,
