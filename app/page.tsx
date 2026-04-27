@@ -265,7 +265,7 @@ export default function PublicPage() {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      padding: '10px 8px 16px',
+      padding: '10px 8px 80px',
       fontFamily: C.sans,
       color: C.text,
     }}>
