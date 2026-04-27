@@ -32,33 +32,34 @@ const dayNameMap: Record<string, string> = {
 const ZONES: {
   key: keyof Duty;
   label: string;
+  shortLabel: string;
   color: string;
   activeText: string;
   activeBg: string;
   activeBorder: string;
 }[] = [
-  { key: 'zielony', label: 'Zielone',      color: '#34d068', activeText: '#6ee896', activeBg: 'rgba(52,208,104,0.13)',   activeBorder: 'rgba(52,208,104,0.5)' },
-  { key: 'fiolet',  label: 'Fioletowe',    color: '#a855f7', activeText: '#c084fc', activeBg: 'rgba(168,85,247,0.13)',   activeBorder: 'rgba(168,85,247,0.5)' },
-  { key: 'poma',    label: 'Pomarańczowe', color: '#f97316', activeText: '#fb923c', activeBg: 'rgba(249,115,22,0.13)',   activeBorder: 'rgba(249,115,22,0.5)' },
-  { key: 'undrg',   label: 'Underground',  color: '#64748b', activeText: '#94a3b8', activeBg: 'rgba(100,116,139,0.08)', activeBorder: 'rgba(100,116,139,0.25)' },
-  { key: 'zolty',   label: 'Żółty',        color: '#eab308', activeText: '#fde047', activeBg: 'rgba(234,179,8,0.13)',   activeBorder: 'rgba(234,179,8,0.5)' },
-  { key: 'czerw',   label: 'Czerwony',     color: '#ef4444', activeText: '#fc8080', activeBg: 'rgba(239,68,68,0.13)',   activeBorder: 'rgba(239,68,68,0.5)' },
-  { key: 'nieb',    label: 'Niebieski',    color: '#3b82f6', activeText: '#7eb8fc', activeBg: 'rgba(59,130,246,0.13)',  activeBorder: 'rgba(59,130,246,0.5)' },
-  { key: 'parter',  label: 'Parter',       color: '#64748b', activeText: '#94a3b8', activeBg: 'rgba(100,116,139,0.08)', activeBorder: 'rgba(100,116,139,0.25)' },
-  { key: 'sg',      label: 'SG',           color: '#64748b', activeText: '#94a3b8', activeBg: 'rgba(100,116,139,0.08)', activeBorder: 'rgba(100,116,139,0.25)' },
-  { key: 'obiad',   label: 'Obiad',        color: '#64748b', activeText: '#94a3b8', activeBg: 'rgba(100,116,139,0.08)', activeBorder: 'rgba(100,116,139,0.25)' },
+  { key: 'zielony', label: 'Zielone',      shortLabel: 'ZI', color: '#34d068', activeText: '#6ee896', activeBg: 'rgba(52,208,104,0.13)',    activeBorder: 'rgba(52,208,104,0.5)'   },
+  { key: 'fiolet',  label: 'Fioletowe',    shortLabel: 'FI', color: '#a855f7', activeText: '#c084fc', activeBg: 'rgba(168,85,247,0.13)',    activeBorder: 'rgba(168,85,247,0.5)'   },
+  { key: 'poma',    label: 'Pomarańczowe', shortLabel: 'PO', color: '#f97316', activeText: '#fb923c', activeBg: 'rgba(249,115,22,0.13)',    activeBorder: 'rgba(249,115,22,0.5)'   },
+  { key: 'undrg',   label: 'Underground',  shortLabel: 'UG', color: '#64748b', activeText: '#94a3b8', activeBg: 'rgba(100,116,139,0.08)',   activeBorder: 'rgba(100,116,139,0.25)' },
+  { key: 'zolty',   label: 'Żółty',        shortLabel: 'ŻÓ', color: '#eab308', activeText: '#fde047', activeBg: 'rgba(234,179,8,0.13)',     activeBorder: 'rgba(234,179,8,0.5)'    },
+  { key: 'czerw',   label: 'Czerwony',     shortLabel: 'CZ', color: '#ef4444', activeText: '#fc8080', activeBg: 'rgba(239,68,68,0.13)',     activeBorder: 'rgba(239,68,68,0.5)'    },
+  { key: 'nieb',    label: 'Niebieski',    shortLabel: 'NI', color: '#3b82f6', activeText: '#7eb8fc', activeBg: 'rgba(59,130,246,0.13)',    activeBorder: 'rgba(59,130,246,0.5)'   },
+  { key: 'parter',  label: 'Parter',       shortLabel: 'PA', color: '#64748b', activeText: '#94a3b8', activeBg: 'rgba(100,116,139,0.08)',   activeBorder: 'rgba(100,116,139,0.25)' },
+  { key: 'sg',      label: 'SG',           shortLabel: 'SG', color: '#64748b', activeText: '#94a3b8', activeBg: 'rgba(100,116,139,0.08)',   activeBorder: 'rgba(100,116,139,0.25)' },
+  { key: 'obiad',   label: 'Obiad',        shortLabel: 'OB', color: '#64748b', activeText: '#94a3b8', activeBg: 'rgba(100,116,139,0.08)',   activeBorder: 'rgba(100,116,139,0.25)' },
 ];
 
 const C = {
-  bg:         '#0d0f14',
-  surface:    '#14171f',
-  border:     'rgba(255,255,255,0.07)',
-  text:       '#eceef4',
-  muted:      '#5a6070',
-  accent:     '#00c9a0',
-  headerBg:   '#0f1118',
-  sans:       "var(--font-ibm-plex-sans, 'IBM Plex Sans', sans-serif)",
-  mono:       "var(--font-ibm-plex-mono, 'IBM Plex Mono', monospace)",
+  bg:       '#0d0f14',
+  surface:  '#14171f',
+  border:   'rgba(255,255,255,0.07)',
+  text:     '#eceef4',
+  muted:    '#5a6070',
+  accent:   '#00c9a0',
+  headerBg: '#0f1118',
+  sans:     "var(--font-ibm-plex-sans, 'IBM Plex Sans', sans-serif)",
+  mono:     "var(--font-ibm-plex-mono, 'IBM Plex Mono', monospace)",
 } as const;
 
 function parseMinutes(s: string): number {
@@ -74,6 +75,12 @@ interface TimerState {
   isDuty: boolean;
   highlightedRowId: number | null;
 }
+
+type CombinedRow =
+  | { type: 'lesson'; nr: string; start: string; end: string; breakId: number }
+  | { type: 'break'; duty: Duty };
+
+const LESSON_DAY_START = '8:00';
 
 export default function PublicPage() {
   const [duties, setDuties] = useState<Duty[]>([]);
@@ -99,6 +106,11 @@ export default function PublicPage() {
     return () => clearInterval(iv);
   }, []);
 
+  const isWeekend = useMemo(() => {
+    const d = new Date().getDay();
+    return d === 0 || d === 6;
+  }, []);
+
   useEffect(() => {
     const idx = new Date().getDay();
     setCurrentDayId(idx === 0 || idx === 6 ? 'poniedzialek' : dayIdMap[idx]);
@@ -108,6 +120,23 @@ export default function PublicPage() {
     () => duties.filter(d => d.day === currentDayId),
     [duties, currentDayId]
   );
+
+  // Interleave lesson separator rows before each break row
+  const combinedRows = useMemo<CombinedRow[]>(() => {
+    const rows: CombinedRow[] = [];
+    filteredDuties.forEach((duty, i) => {
+      const [dutyStart] = (duty.time || '').split('-');
+      const lessonStart = i === 0
+        ? LESSON_DAY_START
+        : (filteredDuties[i - 1].time || '').split('-')[1]?.trim() || '';
+      const cleanEnd = dutyStart?.trim() || '';
+      if (lessonStart && cleanEnd) {
+        rows.push({ type: 'lesson', nr: duty.nr, start: lessonStart, end: cleanEnd, breakId: duty.id });
+      }
+      rows.push({ type: 'break', duty });
+    });
+    return rows;
+  }, [filteredDuties]);
 
   useEffect(() => {
     const tick = () => {
@@ -126,7 +155,6 @@ export default function PublicPage() {
         return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
       };
 
-      // Before first duty row starts
       const firstRow = filteredDuties[0];
       const firstStart = parseMinutes((firstRow.time || '').split('-')[0] || '');
       if (firstStart > 0 && mins < firstStart) {
@@ -144,7 +172,6 @@ export default function PublicPage() {
         return;
       }
 
-      // Walk through duty rows
       let prevEnd = 0;
       for (let i = 0; i < filteredDuties.length; i++) {
         const row = filteredDuties[i];
@@ -153,7 +180,6 @@ export default function PublicPage() {
         const end = parseMinutes(endStr || '');
         if (!start || !end) continue;
 
-        // Lesson between previous duty end and this duty start
         if (prevEnd > 0 && mins >= prevEnd && mins < start) {
           const remaining = start * 60 - totalSecs;
           const elapsed = totalSecs - prevEnd * 60;
@@ -169,7 +195,6 @@ export default function PublicPage() {
           return;
         }
 
-        // Within this duty row (break time)
         if (mins >= start && mins < end) {
           const remaining = end * 60 - totalSecs;
           const elapsed = totalSecs - start * 60;
@@ -196,12 +221,22 @@ export default function PublicPage() {
     return () => clearInterval(iv);
   }, [filteredDuties]);
 
-  const currentRowIndex = filteredDuties.findIndex(d => d.id === timerState.highlightedRowId);
+  // Index in combinedRows that is currently active (lesson or break)
+  const currentCombinedIdx = useMemo(() => {
+    if (!timerState.highlightedRowId) return -1;
+    return combinedRows.findIndex(row => {
+      if (timerState.isDuty) {
+        return row.type === 'break' && row.duty.id === timerState.highlightedRowId;
+      } else {
+        return row.type === 'lesson' && row.breakId === timerState.highlightedRowId;
+      }
+    });
+  }, [combinedRows, timerState.isDuty, timerState.highlightedRowId]);
 
-  const formatName = (value: string, isActive: boolean, activeText: string) => {
+  const formatName = (value: string, isActive: boolean, activeText: string, isPast: boolean) => {
     if (!value || value === '-' || value === '—') {
       return (
-        <span style={{ color: 'rgba(255,255,255,0.12)', display: 'block', textAlign: 'center', fontSize: 12 }}>
+        <span style={{ color: 'rgba(255,255,255,0.12)', display: 'block', textAlign: 'center', fontSize: isPast ? 7 : 10 }}>
           —
         </span>
       );
@@ -209,11 +244,11 @@ export default function PublicPage() {
     const parts = value.split(/[\/\n]/).map(p => p.trim()).filter(Boolean);
     return (
       <div>
-        <div style={{ fontWeight: 600, color: isActive ? activeText : C.text, fontSize: 11, lineHeight: 1.35 }}>
+        <div style={{ fontWeight: 600, color: isActive ? activeText : C.text, fontSize: isPast ? 7 : 10, lineHeight: 1.3 }}>
           {parts[0]}
         </div>
         {parts[1] && (
-          <div style={{ fontSize: 10, color: isActive ? 'rgba(255,255,255,0.5)' : C.muted, marginTop: 1, lineHeight: 1.35 }}>
+          <div style={{ fontSize: isPast ? 7 : 9, color: isActive ? 'rgba(255,255,255,0.5)' : C.muted, marginTop: 1, lineHeight: 1.3 }}>
             {parts[1]}
           </div>
         )}
@@ -230,7 +265,7 @@ export default function PublicPage() {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      padding: '20px 12px 40px',
+      padding: '10px 8px 16px',
       fontFamily: C.sans,
       color: C.text,
     }}>
@@ -247,43 +282,93 @@ export default function PublicPage() {
         }
       `}</style>
 
+      {/* Weekend screen */}
+      {isWeekend && (
+        <div style={{
+          width: '100%', maxWidth: '100%',
+          background: C.surface,
+          border: `1px solid ${C.border}`,
+          borderRadius: 12,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 10,
+          padding: '80px 24px',
+          boxSizing: 'border-box',
+        }}>
+          <div style={{
+            fontFamily: C.mono,
+            fontSize: 11,
+            fontWeight: 500,
+            textTransform: 'uppercase',
+            letterSpacing: '0.18em',
+            color: C.muted,
+          }}>
+            Weekend
+          </div>
+          <div style={{
+            fontSize: 32,
+            fontWeight: 700,
+            color: C.text,
+            letterSpacing: '0.01em',
+            textAlign: 'center',
+          }}>
+            Do zobaczenia w poniedziałek
+          </div>
+          <div style={{
+            width: 40, height: 2,
+            background: C.accent,
+            borderRadius: 2,
+            marginTop: 4,
+          }} />
+        </div>
+      )}
+
       {/* Top Bar */}
+      {!isWeekend && (<>
       <div style={{
-        width: '100%', maxWidth: 1280,
+        width: '100%', maxWidth: '100%',
         background: C.surface,
         border: `1px solid ${C.border}`,
-        borderRadius: 12,
-        padding: '14px 24px',
+        borderRadius: 10,
+        padding: '10px 18px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 16,
+        marginBottom: 10,
         gap: 16,
         boxSizing: 'border-box',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {/* Left: day name stacked above status label */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <div style={{
-            width: 9, height: 9, borderRadius: '50%',
-            background: dotColor,
-            animation: timerState.isDuty ? 'pulse-yellow 2s infinite' : 'pulse-green 2s infinite',
-            flexShrink: 0,
-          }} />
-          <div>
+            fontSize: 11, fontWeight: 600,
+            color: '#515a6e',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+          }}>
+            {dayNameMap[currentDayId] ?? currentDayId}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{
+              width: 9, height: 9, borderRadius: '50%',
+              background: dotColor,
+              animation: timerState.isDuty ? 'pulse-yellow 2s infinite' : 'pulse-green 2s infinite',
+              flexShrink: 0,
+            }} />
             <div style={{
               fontWeight: 700, fontSize: 15,
               letterSpacing: '0.06em',
               textTransform: 'uppercase',
               color: C.text,
-              lineHeight: 1.2,
             }}>
               {timerState.visible ? timerState.label : 'Dyżury'}
-            </div>
-            <div style={{ fontSize: 11, color: C.muted, letterSpacing: '0.04em', marginTop: 1 }}>
-              {dayNameMap[currentDayId] ?? currentDayId}
             </div>
           </div>
         </div>
 
+        {/* Right: countdown timer */}
         {timerState.visible && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.muted, marginBottom: 1 }}>
@@ -311,17 +396,17 @@ export default function PublicPage() {
 
       {/* Table */}
       <div style={{
-        width: '100%', maxWidth: 1280,
+        width: '100%', maxWidth: '100%',
         background: C.surface,
         border: `1px solid ${C.border}`,
-        borderRadius: 12,
+        borderRadius: 10,
         overflow: 'hidden',
         boxSizing: 'border-box',
       }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
           <colgroup>
-            <col style={{ width: 36 }} />
-            <col style={{ width: 72 }} />
+            <col style={{ width: 26 }} />
+            <col style={{ width: 58 }} />
             {ZONES.map(z => <col key={String(z.key)} />)}
           </colgroup>
           <thead>
@@ -329,30 +414,63 @@ export default function PublicPage() {
               <th style={thStyle({ textAlign: 'center' })}>#</th>
               <th style={thStyle({ textAlign: 'center' })}>Czas</th>
               {ZONES.map(zone => (
-                <th key={String(zone.key)} style={thStyle({})}>
+                <th key={String(zone.key)} style={thStyle({ textAlign: 'center' })} title={zone.label}>
                   <span style={{
                     display: 'inline-block',
-                    width: 7, height: 7,
+                    width: 6, height: 6,
                     borderRadius: '50%',
                     background: zone.color,
-                    marginRight: 4,
+                    marginRight: 3,
                     verticalAlign: 'middle',
-                    flexShrink: 0,
                   }} />
-                  <span style={{ color: zone.color, verticalAlign: 'middle' }}>{zone.label}</span>
+                  <span style={{ color: zone.color, verticalAlign: 'middle' }}>{zone.shortLabel}</span>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {filteredDuties.map((row, index) => {
-              const isCurrent = row.id === timerState.highlightedRowId;
-              const isActiveDuty = isCurrent;
-              const isPast = currentRowIndex > 0 && index < currentRowIndex;
+            {combinedRows.map((row, idx) => {
+              const isPast = currentCombinedIdx > 0 && idx < currentCombinedIdx;
+
+              // ── LESSON ROW (thin separator) ──
+              if (row.type === 'lesson') {
+                const isCurrent = !timerState.isDuty && timerState.highlightedRowId === row.breakId;
+                return (
+                  <tr key={`lesson-${row.breakId}`} style={{ opacity: isPast ? 0.35 : 1 }}>
+                    <td
+                      colSpan={12}
+                      style={{
+                        padding: 0,
+                        borderBottom: `1px solid rgba(255,255,255,0.04)`,
+                        background: isCurrent ? 'rgba(0,201,160,0.03)' : 'transparent',
+                      }}
+                    >
+                      <div style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: isPast ? '2px 8px' : isCurrent ? '5px 8px' : '3px 8px',
+                        fontSize: isPast ? 7 : 9,
+                        letterSpacing: '0.05em',
+                        textTransform: 'uppercase',
+                        color: isCurrent ? 'rgba(0,201,160,0.7)' : 'rgba(255,255,255,0.1)',
+                        fontFamily: C.mono,
+                      }}>
+                        <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(0,201,160,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
+                        Lekcja {row.nr}&nbsp;&nbsp;{row.start}–{row.end}{isCurrent ? '  trwa' : ''}
+                        <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(0,201,160,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              }
+
+              // ── BREAK ROW (full duty) ──
+              const { duty } = row;
+              const isCurrent = duty.id === timerState.highlightedRowId && timerState.isDuty;
+              const [start, end] = (duty.time || '').split('-');
 
               return (
                 <tr
-                  key={row.id}
+                  key={duty.id}
                   style={{
                     borderBottom: `1px solid ${C.border}`,
                     opacity: isPast ? 0.35 : 1,
@@ -360,50 +478,43 @@ export default function PublicPage() {
                 >
                   {/* # */}
                   <td style={{
-                    padding: '11px 8px',
+                    padding: isPast ? '3px 4px' : '7px 4px',
                     textAlign: 'center',
                     fontFamily: C.mono,
-                    fontSize: 10,
+                    fontSize: isPast ? 7 : 9,
                     color: C.muted,
                     verticalAlign: 'middle',
                     background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined,
                   }}>
-                    {row.nr}
+                    {duty.nr}
                   </td>
 
                   {/* Czas */}
                   <td style={{
-                    padding: '11px 8px',
+                    padding: isPast ? '3px 4px' : '7px 4px',
                     textAlign: 'center',
                     fontFamily: C.mono,
                     verticalAlign: 'middle',
                     background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined,
                   }}>
-                    {(() => {
-                      const [start, end] = (row.time || '').split('-');
-                      return (
-                        <>
-                          <div style={{ fontSize: 12, color: C.text, fontWeight: 600 }}>{start}</div>
-                          <div style={{ fontSize: 10, color: C.muted }}>{end}</div>
-                          {isCurrent && (
-                            <div style={{
-                              display: 'inline-block',
-                              background: C.accent,
-                              color: '#0d0f14',
-                              fontSize: 9,
-                              fontWeight: 800,
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.08em',
-                              padding: '1px 6px',
-                              borderRadius: 100,
-                              marginTop: 3,
-                            }}>
-                              teraz
-                            </div>
-                          )}
-                        </>
-                      );
-                    })()}
+                    <div style={{ fontSize: isPast ? 7 : 11, color: C.text, fontWeight: 600 }}>{start}</div>
+                    <div style={{ fontSize: isPast ? 7 : 9, color: C.muted }}>{end}</div>
+                    {isCurrent && (
+                      <div style={{
+                        display: 'inline-block',
+                        background: C.accent,
+                        color: '#0d0f14',
+                        fontSize: 9,
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.08em',
+                        padding: '1px 6px',
+                        borderRadius: 100,
+                        marginTop: 3,
+                      }}>
+                        teraz
+                      </div>
+                    )}
                   </td>
 
                   {/* Zone cells */}
@@ -411,17 +522,17 @@ export default function PublicPage() {
                     <td
                       key={String(zone.key)}
                       style={{
-                        padding: '11px 8px',
-                        fontSize: 11,
+                        padding: isPast ? '3px 5px' : '7px 5px',
                         verticalAlign: 'middle',
-                        lineHeight: 1.35,
-                        ...(isActiveDuty ? {
+                        lineHeight: 1.3,
+                        textAlign: 'center',
+                        ...(isCurrent ? {
                           background: zone.activeBg,
                           borderTop: `2px solid ${zone.activeBorder}`,
                         } : {}),
                       }}
                     >
-                      {formatName(String(row[zone.key] || ''), isActiveDuty, zone.activeText)}
+                      {formatName(String(duty[zone.key] || ''), isCurrent, zone.activeText, isPast)}
                     </td>
                   ))}
                 </tr>
@@ -430,17 +541,18 @@ export default function PublicPage() {
           </tbody>
         </table>
       </div>
+      </>)}
     </div>
   );
 }
 
 function thStyle(extra: React.CSSProperties): React.CSSProperties {
   return {
-    padding: '10px 8px',
-    fontSize: 10,
+    padding: '7px 5px',
+    fontSize: 9,
     fontWeight: 700,
     textTransform: 'uppercase',
-    letterSpacing: '0.1em',
+    letterSpacing: '0.08em',
     color: '#5a6070',
     textAlign: 'left',
     whiteSpace: 'nowrap',
