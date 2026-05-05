@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/seed.js && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "seed": "node scripts/seed.js"
@@ -22,12 +22,16 @@
   },
   "devDependencies": {
     "@types/better-sqlite3": "latest",
+    "@types/jest": "^30.0.0",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "postcss": "latest",
     "tailwindcss": "latest",
+    "ts-jest": "^29.4.9",
     "ts-node": "latest",
     "typescript": "latest"
   }

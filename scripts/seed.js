@@ -48,6 +48,10 @@ const DEFAULT_DATA = {
 
 async function seed() {
   try {
+    if (process.env.ALLOW_DB_SEED !== 'true') {
+      throw new Error('Seed blocked. Set ALLOW_DB_SEED=true to overwrite duties data.');
+    }
+
     await sql`
       CREATE TABLE IF NOT EXISTS duties (
         id SERIAL PRIMARY KEY,
@@ -83,6 +87,7 @@ async function seed() {
     console.log('Seeded database with initial data.');
   } catch (error) {
     console.error('Error seeding database:', error);
+    process.exitCode = 1;
   }
 }
 
