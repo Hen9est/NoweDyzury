@@ -270,7 +270,7 @@ export default function PublicPage() {
   const dotColor = timerState.isDuty ? '#eab308' : C.accent;
 
   const W = 640;
-  const H = 500;
+  const H = 620;
   const PAD = 6;
   const PAD_BOTTOM = 80;
   const GAP = 6;
