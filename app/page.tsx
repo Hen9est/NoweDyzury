@@ -56,11 +56,17 @@ const C = {
   border:   'rgba(255,255,255,0.07)',
   text:     '#eceef4',
   muted:    '#5a6070',
-  accent:   '#00c9a0',
+  accent:   '#ec4899',
   headerBg: '#0f1118',
   sans:     "var(--font-ibm-plex-sans, 'IBM Plex Sans', sans-serif)",
   mono:     "var(--font-ibm-plex-mono, 'IBM Plex Mono', monospace)",
 } as const;
+
+function schoolYear(d: Date = new Date()): string {
+  // rok szkolny startuje we wrzesniu (miesiac 8, liczac od zera)
+  const start = d.getMonth() >= 8 ? d.getFullYear() : d.getFullYear() - 1;
+  return `${start}/${String((start + 1) % 100).padStart(2, '0')}`;
+}
 
 function parseMinutes(s: string): number {
   const m = s.match(/(\d{1,2}):(\d{2})/);
@@ -108,14 +114,22 @@ export default function PublicPage() {
     return () => clearInterval(iv);
   }, []);
 
-  const isWeekend = useMemo(() => {
-    const d = new Date().getDay();
-    return d === 0 || d === 6;
-  }, []);
+  const [isWeekend, setIsWeekend] = useState(false);
+  const [schoolYearLabel, setSchoolYearLabel] = useState('');
 
+  // Dzien przeliczamy cyklicznie, nie tylko przy starcie - tablica potrafi
+  // trzymac strone zaladowana tygodniami bez przeladowania.
   useEffect(() => {
-    const idx = new Date().getDay();
-    setCurrentDayId(idx === 0 || idx === 6 ? 'poniedzialek' : dayIdMap[idx]);
+    const syncDay = () => {
+      const idx = new Date().getDay();
+      const weekend = idx === 0 || idx === 6;
+      setIsWeekend(weekend);
+      setCurrentDayId(weekend ? 'poniedzialek' : dayIdMap[idx]);
+      setSchoolYearLabel(schoolYear());
+    };
+    syncDay();
+    const iv = setInterval(syncDay, 60000);
+    return () => clearInterval(iv);
   }, []);
 
   const filteredDuties = useMemo(
@@ -295,10 +309,10 @@ export default function PublicPage() {
       color: C.text,
     }}>
       <style>{`
-        @keyframes pulse-green {
-          0%   { box-shadow: 0 0 0 0 rgba(0,201,160,0.5); }
-          70%  { box-shadow: 0 0 0 7px rgba(0,201,160,0); }
-          100% { box-shadow: 0 0 0 0 rgba(0,201,160,0); }
+        @keyframes pulse-accent {
+          0%   { box-shadow: 0 0 0 0 rgba(236,72,153,0.5); }
+          70%  { box-shadow: 0 0 0 7px rgba(236,72,153,0); }
+          100% { box-shadow: 0 0 0 0 rgba(236,72,153,0); }
         }
         @keyframes pulse-yellow {
           0%   { box-shadow: 0 0 0 0 rgba(234,179,8,0.5); }
@@ -350,12 +364,15 @@ export default function PublicPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <div style={{ fontSize: 4, fontWeight: 600, color: '#515a6e', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {dayNameMap[currentDayId] ?? currentDayId}
+              {schoolYearLabel && (
+                <span style={{ color: C.muted, marginLeft: 4 }}>· {schoolYearLabel}</span>
+              )}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{
                 width: 8, height: 8, borderRadius: '50%',
                 background: dotColor,
-                animation: timerState.isDuty ? 'pulse-yellow 2s infinite' : 'pulse-green 2s infinite',
+                animation: timerState.isDuty ? 'pulse-yellow 2s infinite' : 'pulse-accent 2s infinite',
                 flexShrink: 0,
               }} />
               <div style={{ fontWeight: 700, fontSize: 8, letterSpacing: '0.06em', textTransform: 'uppercase', color: C.text }}>
@@ -415,7 +432,7 @@ export default function PublicPage() {
                   const isCurrent = !timerState.isDuty && timerState.highlightedRowId === row.breakId;
                   return (
                     <tr key={`lesson-${row.breakId}`} style={{ opacity: isPast ? 0.35 : 1 }}>
-                      <td colSpan={12} style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.03)' : 'transparent', borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
+                      <td colSpan={12} style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(236,72,153,0.03)' : 'transparent', borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
                         <div style={{
                           height: LESSON_ROW_H,
                           overflow: 'hidden',
@@ -426,12 +443,12 @@ export default function PublicPage() {
                           fontSize: 4,
                           letterSpacing: '0.05em',
                           textTransform: 'uppercase',
-                          color: isCurrent ? 'rgba(0,201,160,0.7)' : 'rgba(255,255,255,0.12)',
+                          color: isCurrent ? 'rgba(236,72,153,0.7)' : 'rgba(255,255,255,0.12)',
                           fontFamily: C.mono,
                         }}>
-                          <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(0,201,160,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
+                          <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(236,72,153,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
                           Lekcja {row.nr}&nbsp;{row.start}–{row.end}{isCurrent ? ' trwa' : ''}
-                          <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(0,201,160,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
+                          <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(236,72,153,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
                         </div>
                       </td>
                     </tr>
@@ -446,12 +463,12 @@ export default function PublicPage() {
 
                 return (
                   <tr key={duty.id} style={{ borderBottom: `1px solid ${C.border}`, opacity: isPast ? 0.4 : 1 }}>
-                    <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined }}>
+                    <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(236,72,153,0.04)' : undefined }}>
                       <div style={{ height: cellH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono, fontSize: isPast ? 4 : 4, color: C.muted }}>
                         {duty.nr}
                       </div>
                     </td>
-                    <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(0,201,160,0.04)' : undefined }}>
+                    <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(236,72,153,0.04)' : undefined }}>
                       <div style={{ height: cellH, overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono }}>
                         <div style={{ fontSize: isPast ? 4 : 6, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
                         <div style={{ fontSize: isPast ? 4 : 4, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>
