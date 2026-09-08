@@ -50,16 +50,29 @@ const ZONES: {
   { key: 'obiad',   label: 'Obiad',        shortLabel: 'OB', color: '#64748b', activeText: '#94a3b8', activeBg: 'rgba(100,116,139,0.08)',   activeBorder: 'rgba(100,116,139,0.25)' },
 ];
 
+// Stała paleta - magenta jest jedynym akcentem, ktory nie koliduje
+// z zadnym kolorem korytarza (najblizszy: Czerwony, i tak wyraznie dalej
+// niz kazdy z sezonowych akcentow paska zegara).
+const ACCENT = '#ec4899';
+const ACCENT_SOFT = '#f9a8d4';
+
+function rgbOf(hex: string): string {
+  const h = hex.replace('#', '');
+  return `${parseInt(h.slice(0, 2), 16)},${parseInt(h.slice(2, 4), 16)},${parseInt(h.slice(4, 6), 16)}`;
+}
+
 const C = {
-  bg:       '#0d0f14',
-  surface:  '#14171f',
-  border:   'rgba(255,255,255,0.07)',
-  text:     '#eceef4',
-  muted:    '#5a6070',
-  accent:   '#ec4899',
-  headerBg: '#0f1118',
-  sans:     "var(--font-ibm-plex-sans, 'IBM Plex Sans', sans-serif)",
-  mono:     "var(--font-ibm-plex-mono, 'IBM Plex Mono', monospace)",
+  bg:         '#0d0f14',
+  surface:    '#14171f',
+  border:     'rgba(255,255,255,0.07)',
+  text:       '#f6f8fc',
+  muted:      'rgba(255,255,255,0.5)',
+  accent:     ACCENT,
+  accentSoft: ACCENT_SOFT,
+  accentRGB:  rgbOf(ACCENT),
+  headerBg:   'rgba(0,0,0,0.25)',
+  sans:       "var(--font-dm-sans, 'DM Sans', sans-serif)",
+  mono:       "var(--font-dm-mono, 'DM Mono', monospace)",
 } as const;
 
 function schoolYear(d: Date = new Date()): string {
@@ -85,6 +98,28 @@ interface TimerState {
 type CombinedRow =
   | { type: 'lesson'; nr: string; start: string; end: string; breakId: number }
   | { type: 'break'; duty: Duty };
+
+// Szczęśliwy numer - logika przeniesiona 1:1 z paska zegara, zeby ciag sie nie rozjechal
+const LUCKY_BAGS = [
+  [3,5,17,1,9,14,6,8,12,4,10,15,2,13,7,11,18,16],
+  [10,4,15,2,13,7,1,18,9,16,5,11,17,3,8,14,6,12],
+  [7,14,2,16,9,12,5,1,11,17,3,10,6,15,18,4,13,8],
+  [16,6,13,8,3,18,10,2,15,5,1,14,9,11,4,17,7,12],
+  [5,12,17,4,11,8,15,7,2,13,9,1,18,6,10,16,3,14],
+  [9,1,14,6,10,16,3,13,4,17,7,12,15,2,11,18,8,5],
+  [2,15,8,11,4,7,13,18,6,10,16,3,14,9,1,12,5,17],
+  [14,3,10,12,5,17,7,4,13,9,1,18,2,8,15,6,11,16],
+  [11,16,6,1,8,15,9,3,12,14,17,5,13,7,2,10,18,4],
+  [4,18,7,13,2,10,1,16,8,15,6,11,12,5,17,9,14,3],
+];
+const LUCKY_START_UTC = Date.UTC(2025, 9, 25);
+
+function getLucky(now: Date): number {
+  const todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  let d = Math.floor((todayUTC - LUCKY_START_UTC) / 86400000);
+  if (d < 0) d = ((d % 180) + 180) % 180;
+  return LUCKY_BAGS[Math.floor((d % 180) / 18)][d % 18];
+}
 
 const LESSON_DAY_START = '8:00';
 const LESSON_ROW_H = 14;
@@ -116,6 +151,9 @@ export default function PublicPage() {
 
   const [isWeekend, setIsWeekend] = useState(false);
   const [schoolYearLabel, setSchoolYearLabel] = useState('');
+  const [clock, setClock] = useState({ h: '--', m: '--', s: '--' });
+  const [lucky, setLucky] = useState(0);
+  const [dateLabel, setDateLabel] = useState('');
 
   // Dzien przeliczamy cyklicznie, nie tylko przy starcie - tablica potrafi
   // trzymac strone zaladowana tygodniami bez przeladowania.
@@ -126,9 +164,23 @@ export default function PublicPage() {
       setIsWeekend(weekend);
       setCurrentDayId(weekend ? 'poniedzialek' : dayIdMap[idx]);
       setSchoolYearLabel(schoolYear());
+      const now = new Date();
+      setLucky(getLucky(now));
+      setDateLabel(now.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' }));
     };
     syncDay();
     const iv = setInterval(syncDay, 60000);
+    return () => clearInterval(iv);
+  }, []);
+
+  useEffect(() => {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const tickClock = () => {
+      const n = new Date();
+      setClock({ h: pad(n.getHours()), m: pad(n.getMinutes()), s: pad(n.getSeconds()) });
+    };
+    tickClock();
+    const iv = setInterval(tickClock, 1000);
     return () => clearInterval(iv);
   }, []);
 
@@ -270,11 +322,11 @@ export default function PublicPage() {
   const dotColor = timerState.isDuty ? '#eab308' : C.accent;
 
   const W = 640;
-  const H = 620;
+  const H = 780;
   const PAD = 6;
   const PAD_BOTTOM = 80;
   const GAP = 6;
-  const TOP_BAR_H = 34;
+  const TOP_BAR_H = 194;
   // H - PAD_top - PAD_bottom - GAP - TOP_BAR_H - TABLE_HEADER_H - 2px borders - 15px safety
   const TBODY_AVAIL = H - PAD - PAD_BOTTOM - GAP - TOP_BAR_H - TABLE_HEADER_H - 2 - 15;
 
@@ -310,10 +362,11 @@ export default function PublicPage() {
     }}>
       <style>{`
         @keyframes pulse-accent {
-          0%   { box-shadow: 0 0 0 0 rgba(236,72,153,0.5); }
-          70%  { box-shadow: 0 0 0 7px rgba(236,72,153,0); }
-          100% { box-shadow: 0 0 0 0 rgba(236,72,153,0); }
+          0%   { box-shadow: 0 0 0 0 rgba(${C.accentRGB},0.5); }
+          70%  { box-shadow: 0 0 0 7px rgba(${C.accentRGB},0); }
+          100% { box-shadow: 0 0 0 0 rgba(${C.accentRGB},0); }
         }
+        @keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: .15 } }
         @keyframes pulse-yellow {
           0%   { box-shadow: 0 0 0 0 rgba(234,179,8,0.5); }
           70%  { box-shadow: 0 0 0 7px rgba(234,179,8,0); }
@@ -346,54 +399,108 @@ export default function PublicPage() {
       )}
 
       {!isWeekend && (<>
-        {/* Top Bar */}
+        {/* Naglowek = pasek zegara 1:1 + rzad odliczania */}
         <div style={{
           flexShrink: 0,
           height: TOP_BAR_H,
           background: C.surface,
           border: `1px solid ${C.border}`,
           borderRadius: 8,
-          padding: '0 14px',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 16,
+          flexDirection: 'column',
           boxSizing: 'border-box',
           overflow: 'hidden',
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <div style={{ fontSize: 4, fontWeight: 600, color: '#515a6e', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              {dayNameMap[currentDayId] ?? currentDayId}
-              {schoolYearLabel && (
-                <span style={{ color: C.muted, marginLeft: 4 }}>· {schoolYearLabel}</span>
-              )}
+          {/* --- zegar: trojpodzial jak na pasku --- */}
+          <div style={{ height: 160, display: 'flex', alignItems: 'stretch', flexShrink: 0 }}>
+            {/* kolumna z data */}
+            <div style={{
+              width: 126, padding: '0 18px',
+              background: 'rgba(255,255,255,0.035)',
+              display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3,
+              boxSizing: 'border-box',
+            }}>
+              <div style={{ fontSize: 15, fontWeight: 500, lineHeight: 1.15, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.accentSoft }}>
+                {dayNameMap[currentDayId] ?? currentDayId}
+              </div>
+              <div style={{ fontSize: 13, lineHeight: 1.3, color: C.muted }}>{dateLabel}</div>
+              <div style={{ fontSize: 11, lineHeight: 1.3, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.06em' }}>{schoolYearLabel}</div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+
+            {/* zegar */}
+            <div style={{
+              flex: 1,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderLeft: `1px solid ${C.border}`, borderRight: `1px solid ${C.border}`,
+            }}>
+              <div style={{ fontFamily: C.mono, fontSize: 84, lineHeight: 0.9, letterSpacing: '-0.05em', color: C.text }}>
+                {clock.h}
+                <span style={{ color: C.accent, animation: 'blink 1s step-end infinite' }}>:</span>
+                {clock.m}
+                <span style={{ fontSize: '0.5em', opacity: 0.7, marginLeft: '0.14em', letterSpacing: 0 }}>{clock.s}</span>
+              </div>
+            </div>
+
+            {/* szczesliwy numer */}
+            <div style={{
+              width: 196, padding: '0 14px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8,
+              boxSizing: 'border-box',
+            }}>
+              <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: '0.24em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}>
+                Szczęśliwy numer
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ fontFamily: C.mono, fontSize: 62, lineHeight: 0.86, letterSpacing: '-0.05em', color: C.accent }}>
+                  {lucky || '?'}
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 10px)', gap: 6 }}>
+                  {Array.from({ length: 18 }, (_, i) => (
+                    <div key={i} style={{
+                      width: 10, height: 10, borderRadius: '50%',
+                      background: i < lucky ? C.accent : 'rgba(255,255,255,0.1)',
+                    }} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* --- rzad odliczania: status | pasek | pozostalo --- */}
+          <div style={{
+            flex: 1,
+            display: 'flex', alignItems: 'center', gap: 12,
+            padding: '0 16px',
+            borderTop: `1px solid ${C.border}`,
+            boxSizing: 'border-box',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0 }}>
               <div style={{
                 width: 8, height: 8, borderRadius: '50%',
                 background: dotColor,
                 animation: timerState.isDuty ? 'pulse-yellow 2s infinite' : 'pulse-accent 2s infinite',
                 flexShrink: 0,
               }} />
-              <div style={{ fontWeight: 700, fontSize: 8, letterSpacing: '0.06em', textTransform: 'uppercase', color: C.text }}>
+              <div style={{ fontWeight: 700, fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.text, whiteSpace: 'nowrap' }}>
                 {timerState.visible ? timerState.label : 'Dyżury'}
               </div>
             </div>
-          </div>
 
-          {timerState.visible && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <div style={{ fontSize: 4, textTransform: 'uppercase', letterSpacing: '0.1em', color: C.muted }}>
-                Pozostało
-              </div>
-              <div style={{ fontFamily: C.mono, fontSize: 17, fontWeight: 600, color: C.accent, letterSpacing: '0.03em' }}>
-                {timerState.countdown}
-              </div>
-              <div style={{ height: 2, background: 'rgba(255,255,255,0.06)', borderRadius: 2, marginTop: 2, width: 90 }}>
+            <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.07)', borderRadius: 2, overflow: 'hidden' }}>
+              {timerState.visible && (
                 <div style={{ height: '100%', borderRadius: 2, background: C.accent, transition: 'width 1s linear', width: `${timerState.progress}%` }} />
-              </div>
+              )}
             </div>
-          )}
+
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexShrink: 0 }}>
+              <span style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.muted }}>
+                Pozostało
+              </span>
+              <span style={{ fontFamily: C.mono, fontSize: 20, fontWeight: 600, color: C.accent, letterSpacing: '0.02em' }}>
+                {timerState.visible ? timerState.countdown : '--:--'}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Table */}
@@ -432,7 +539,7 @@ export default function PublicPage() {
                   const isCurrent = !timerState.isDuty && timerState.highlightedRowId === row.breakId;
                   return (
                     <tr key={`lesson-${row.breakId}`} style={{ opacity: isPast ? 0.35 : 1 }}>
-                      <td colSpan={12} style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(236,72,153,0.03)' : 'transparent', borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
+                      <td colSpan={12} style={{ padding: 0, overflow: 'hidden', background: isCurrent ? `rgba(${C.accentRGB},0.03)` : 'transparent', borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
                         <div style={{
                           height: LESSON_ROW_H,
                           overflow: 'hidden',
@@ -443,12 +550,12 @@ export default function PublicPage() {
                           fontSize: 4,
                           letterSpacing: '0.05em',
                           textTransform: 'uppercase',
-                          color: isCurrent ? 'rgba(236,72,153,0.7)' : 'rgba(255,255,255,0.12)',
+                          color: isCurrent ? `rgba(${C.accentRGB},0.7)` : 'rgba(255,255,255,0.12)',
                           fontFamily: C.mono,
                         }}>
-                          <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(236,72,153,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
+                          <div style={{ flex: 1, height: 1, background: isCurrent ? `rgba(${C.accentRGB},0.2)` : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
                           Lekcja {row.nr}&nbsp;{row.start}–{row.end}{isCurrent ? ' trwa' : ''}
-                          <div style={{ flex: 1, height: 1, background: isCurrent ? 'rgba(236,72,153,0.2)' : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
+                          <div style={{ flex: 1, height: 1, background: isCurrent ? `rgba(${C.accentRGB},0.2)` : 'rgba(255,255,255,0.04)', borderRadius: 1 }} />
                         </div>
                       </td>
                     </tr>
@@ -463,12 +570,12 @@ export default function PublicPage() {
 
                 return (
                   <tr key={duty.id} style={{ borderBottom: `1px solid ${C.border}`, opacity: isPast ? 0.4 : 1 }}>
-                    <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(236,72,153,0.04)' : undefined }}>
+                    <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? `rgba(${C.accentRGB},0.04)` : undefined }}>
                       <div style={{ height: cellH, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono, fontSize: isPast ? 4 : 4, color: C.muted }}>
                         {duty.nr}
                       </div>
                     </td>
-                    <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? 'rgba(236,72,153,0.04)' : undefined }}>
+                    <td style={{ padding: 0, overflow: 'hidden', background: isCurrent ? `rgba(${C.accentRGB},0.04)` : undefined }}>
                       <div style={{ height: cellH, overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: C.mono }}>
                         <div style={{ fontSize: isPast ? 4 : 6, color: C.text, fontWeight: 600, lineHeight: 1.2 }}>{start}</div>
                         <div style={{ fontSize: isPast ? 4 : 4, color: isCurrent ? C.accent : C.muted, lineHeight: 1.2 }}>{end}</div>

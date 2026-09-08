@@ -1,17 +1,17 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google'
+import { DM_Sans, DM_Mono } from 'next/font/google'
 
-const ibmPlexSans = IBM_Plex_Sans({
-  weight: ['400', '500', '600', '700'],
+const dmSans = DM_Sans({
+  weight: ['400', '500', '700'],
   subsets: ['latin'],
-  variable: '--font-ibm-plex-sans',
+  variable: '--font-dm-sans',
 })
 
-const ibmPlexMono = IBM_Plex_Mono({
-  weight: ['400', '500', '600'],
+const dmMono = DM_Mono({
+  weight: ['400', '500'],
   subsets: ['latin'],
-  variable: '--font-ibm-plex-mono',
+  variable: '--font-dm-mono',
 })
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pl">
-      <body className={`${ibmPlexSans.variable} ${ibmPlexMono.variable}`}>{children}</body>
+      <body className={`${dmSans.variable} ${dmMono.variable}`}>{children}</body>
     </html>
   )
 }
