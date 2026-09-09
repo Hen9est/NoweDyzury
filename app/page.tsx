@@ -328,7 +328,7 @@ export default function PublicPage() {
   const GAP = 6;
   const TOP_BAR_H = 174;
   // H - PAD_top - PAD_bottom - GAP - TOP_BAR_H - TABLE_HEADER_H - 2px borders - 15px safety
-  const TBODY_AVAIL = H - PAD - PAD_BOTTOM - GAP - TOP_BAR_H - TABLE_HEADER_H - 2 - 15;
+  const TBODY_AVAIL = H - PAD - PAD_BOTTOM - GAP - TOP_BAR_H - TABLE_HEADER_H - 2 - 18;
 
   const nPastBreaks = useMemo(() => {
     if (currentCombinedIdx <= 0) return 0;
