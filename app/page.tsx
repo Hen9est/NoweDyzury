@@ -322,11 +322,11 @@ export default function PublicPage() {
   const dotColor = timerState.isDuty ? '#eab308' : C.accent;
 
   const W = 640;
-  const H = 780;
+  const H = 760;
   const PAD = 6;
   const PAD_BOTTOM = 80;
   const GAP = 6;
-  const TOP_BAR_H = 194;
+  const TOP_BAR_H = 174;
   // H - PAD_top - PAD_bottom - GAP - TOP_BAR_H - TABLE_HEADER_H - 2px borders - 15px safety
   const TBODY_AVAIL = H - PAD - PAD_BOTTOM - GAP - TOP_BAR_H - TABLE_HEADER_H - 2 - 15;
 
@@ -412,7 +412,7 @@ export default function PublicPage() {
           overflow: 'hidden',
         }}>
           {/* --- zegar: trojpodzial jak na pasku --- */}
-          <div style={{ height: 160, display: 'flex', alignItems: 'stretch', flexShrink: 0 }}>
+          <div style={{ height: 140, display: 'flex', alignItems: 'stretch', flexShrink: 0 }}>
             {/* kolumna z data */}
             <div style={{
               width: 126, padding: '0 18px',
