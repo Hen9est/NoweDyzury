@@ -322,11 +322,11 @@ export default function PublicPage() {
   const dotColor = timerState.isDuty ? '#eab308' : C.accent;
 
   const W = 640;
-  const H = 760;
+  const H = 710;
   const PAD = 6;
   const PAD_BOTTOM = 80;
   const GAP = 6;
-  const TOP_BAR_H = 174;
+  const TOP_BAR_H = 124;
   // H - PAD_top - PAD_bottom - GAP - TOP_BAR_H - TABLE_HEADER_H - 2px borders - 15px safety
   const TBODY_AVAIL = H - PAD - PAD_BOTTOM - GAP - TOP_BAR_H - TABLE_HEADER_H - 2 - 18;
 
@@ -412,7 +412,7 @@ export default function PublicPage() {
           overflow: 'hidden',
         }}>
           {/* --- zegar: trojpodzial jak na pasku --- */}
-          <div style={{ height: 140, display: 'flex', alignItems: 'stretch', flexShrink: 0 }}>
+          <div style={{ height: 98, display: 'flex', alignItems: 'stretch', flexShrink: 0 }}>
             {/* kolumna z data */}
             <div style={{
               width: 126, padding: '0 18px',
@@ -433,11 +433,11 @@ export default function PublicPage() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               borderLeft: `1px solid ${C.border}`, borderRight: `1px solid ${C.border}`,
             }}>
-              <div style={{ fontFamily: C.mono, fontSize: 84, lineHeight: 0.9, letterSpacing: '-0.05em', color: C.text }}>
+              <div style={{ fontFamily: C.mono, fontSize: 68, lineHeight: 0.9, letterSpacing: '-0.05em', color: C.text }}>
                 {clock.h}
                 <span style={{ color: C.accent, animation: 'blink 1s step-end infinite' }}>:</span>
                 {clock.m}
-                <span style={{ fontSize: '0.5em', opacity: 0.7, marginLeft: '0.14em', letterSpacing: 0 }}>{clock.s}</span>
+                <span style={{ fontSize: '0.6em', opacity: 0.7, marginLeft: '0.14em', letterSpacing: 0 }}>{clock.s}</span>
               </div>
             </div>
 
@@ -451,13 +451,13 @@ export default function PublicPage() {
                 Szczęśliwy numer
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{ fontFamily: C.mono, fontSize: 62, lineHeight: 0.86, letterSpacing: '-0.05em', color: C.accent }}>
+                <div style={{ fontFamily: C.mono, fontSize: 50, lineHeight: 0.86, letterSpacing: '-0.05em', color: C.accent }}>
                   {lucky || '?'}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 10px)', gap: 6 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 6px)', gap: 4 }}>
                   {Array.from({ length: 18 }, (_, i) => (
                     <div key={i} style={{
-                      width: 10, height: 10, borderRadius: '50%',
+                      width: 6, height: 6, borderRadius: '50%',
                       background: i < lucky ? C.accent : 'rgba(255,255,255,0.1)',
                     }} />
                   ))}
@@ -496,7 +496,7 @@ export default function PublicPage() {
               <span style={{ fontSize: 8, textTransform: 'uppercase', letterSpacing: '0.14em', color: C.muted }}>
                 Pozostało
               </span>
-              <span style={{ fontFamily: C.mono, fontSize: 20, fontWeight: 600, color: C.accent, letterSpacing: '0.02em' }}>
+              <span style={{ fontFamily: C.mono, fontSize: 20, fontWeight: 600, color: C.accent, letterSpacing: '0.02em', lineHeight: 1 }}>
                 {timerState.visible ? timerState.countdown : '--:--'}
               </span>
             </div>
